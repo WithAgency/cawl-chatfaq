@@ -54,3 +54,4 @@ Here are some examples of how to use the ChatFAQ SDK to build different types of
 - **Full KB RAG Example**: This example demonstrates how to use the entire knowledge base for RAG and prompt caching, which can be useful given that context windows are large and we don't have to deploy a retriever. [fsm_definition.py](sdk/examples/full_kb_rag_example/fsm_definition.py)
 - **Retrieve Example**: This example shows how to use the `retrieve` function to fetch relevant information from a knowledge base. [fsm_definition.py](sdk/examples/retrieve_example/fsm_definition.py)
 - **Structured Generation Example**: This example shows how to use the LLM to extract structured information from user input. [fsm_definition.py](sdk/examples/structured_generation/fsm_definition.py)
+

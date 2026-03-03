@@ -229,7 +229,7 @@ If you declare data attributes and a config object and its keys collide, then th
     data-speech-recognition-auto-send
     data-allow-attachments
     data-initial-conversation-metadata='{"hello": "world"}'
-    data-custom-iframed-msgs='{"iframe": {"src": "https://localhost:3000/iframed-msg", "mobileNoMargins": true, "desktopNoMargins": true, "fullWidth": true, "dynamicHeight": true, "scrolling": "np", "noPadding": true}}'
+    data-custom-i-framed-msgs='{"iframe": {"src": "https://localhost:3000/iframed-msg", "mobileNoMargins": true, "desktopNoMargins": true, "fullWidth": true, "dynamicHeight": true, "scrolling": "np", "noPadding": true}}'
     data-auth-token="1234567890"
     data-enable-logout
     data-enable-resend

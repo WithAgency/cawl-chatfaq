@@ -119,9 +119,17 @@
                             <UserFeedback v-else :msgId="props.message.id" :msgTargetId="store.getPrevMsg(props.message, messageIsNotFeedback).id" @feedbacking="feedbacking = true" @disabled="feedbacking = false"/>
                         </div>
                     </template>
+                    <template v-else-if="getFirstLayerType() === 'thumbs_rating_without_details'">
+                        <div class="layer" v-for="layer in props.message.stack">
+                            <Teleport v-if="getFirstLayerMergeToPrev()" :to="'#msg-commands-' + store.getPrevMsg(props.message, messageIsNotFeedback).id">
+                                <UserFeedback :noDetails="true" :msgId="props.message.id" :msgTargetId="store.getPrevMsg(props.message, messageIsNotFeedback).id" @feedbacking="feedbacking = true" @disabled="feedbacking = false"/>
+                            </Teleport>
+                            <UserFeedback v-else :noDetails="true" :msgId="props.message.id" :msgTargetId="store.getPrevMsg(props.message, messageIsNotFeedback).id" @feedbacking="feedbacking = true" @disabled="feedbacking = false"/>
+                        </div>
+                    </template>                    
                     <template v-else>
                         <div class="layer">
-                            <span>Stack type not supported</span>
+                            <span>Sorry, that stack type not supported</span>
                         </div>
                     </template>
                 </div>

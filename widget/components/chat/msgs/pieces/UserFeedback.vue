@@ -1,17 +1,17 @@
-<template>
+    <template>
     <div class="voting"
-         :class="{'feedbacked': feedbacked && !disabled, 'dark-mode': store.darkMode}">
-        <div class="separator-line" v-if="feedbacked && !disabled" :class="{ 'dark-mode': store.darkMode }"></div>
+         :class="{'feedbacked': feedbacked && !disabled && !props.noDetails, 'dark-mode': store.darkMode}">
+        <div class="separator-line" v-if="feedbacked && !disabled && !props.noDetails" :class="{ 'dark-mode': store.darkMode }"></div>
         <div class="feedback-top">
-            <div class="feedback-top-text" v-if="feedbacked && !disabled">{{ $t('additionalfeedback') }}</div>
+            <div class="feedback-top-text" v-if="feedbacked && !disabled && !props.noDetails">{{ $t('additionalfeedback') }}</div>
             <!-- <div v-else-if="feedbacked">{{ $t('feedbacksent') }}:</div> -->
             <div class="feedback-controls">
-                <ThumbUp class="control" :class="{'selected': feedbackValue === 'positive', 'dark-mode': store.darkMode, 'disabled': disabled}" @click="sendUserFeedback('positive')" />
-                <ThumbDown class="control" :class="{'selected': feedbackValue === 'negative', 'dark-mode': store.darkMode, 'disabled': disabled}" @click="sendUserFeedback('negative')"/>
+                <ThumbUp class="control" :class="{'selected': feedbackValue === 'positive', 'dark-mode': store.darkMode, 'disabled': disabled}" @click="sendUserFeedback('positive', props.noDetails ? true : false)" />
+                <ThumbDown class="control" :class="{'selected': feedbackValue === 'negative', 'dark-mode': store.darkMode, 'disabled': disabled}" @click="sendUserFeedback('negative', props.noDetails ? true : false)"/>
                 <CopyToClipboard :msg-id="msgId"/>
             </div>
         </div>
-        <div v-if="feedbacked && !disabled">
+        <div v-if="feedbacked && !disabled && !props.noDetails">
             <div class="feedback-input-wrapper" :class="{ 'dark-mode': store.darkMode }">
                 <div
                     v-if="feedbackValue === 'negative'"
@@ -67,7 +67,7 @@ import {ref, defineProps, onMounted} from "vue";
 import ThumbUp from "~/components/icons/ThumbUp.vue";
 import ThumbDown from "~/components/icons/ThumbDown.vue";
 
-const props = defineProps(["msgId", "msgTargetId"]);
+const props = defineProps(["msgId", "msgTargetId", "noDetails"]);
 
 const store = useGlobalStore();
 const feedbacked = ref(null)

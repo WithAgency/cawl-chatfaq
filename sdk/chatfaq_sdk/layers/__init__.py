@@ -292,6 +292,15 @@ class ThumbsRating(UserFeedback):
         yield [payload], True
 
 
+class ThumbsRatingWithoutDetails(ThumbsRating):
+    """
+    A message layer that includes a thumbs rating without details.
+    ie. Using a simple thumbs up/down without the form opening up
+    to ask for more details about the rating.
+    """
+    _type = "thumbs_rating_without_details"
+
+
 class TextFeedback(UserFeedback):
     """
     A message layer that includes a feedback text box.

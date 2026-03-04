@@ -121,7 +121,7 @@ const loadingConversation = ref(false)
 const thereIsNext = ref(true)
 const thereIsPrev = ref(true)
 let conversations = []
-const notRenderableStackTypes = ["gtm_tag", "close_conversation", "thumbs_rating", "text_feedback", "star_rating", undefined]
+const notRenderableStackTypes = ["gtm_tag", "close_conversation", "thumbs_rating", "thumbs_rating_without_details", "text_feedback", "star_rating", undefined]
 
 const renderableMessages = computed(() => {
     return conversation.value.msgs_chain?.filter(msg => msg.stack?.length > 0 && !notRenderableStackTypes.includes(msg.stack[0]?.type)) || []

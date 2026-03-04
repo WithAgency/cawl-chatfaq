@@ -16,7 +16,8 @@
         "start": "nuxt start",
         "generate": "nuxt generate",
         "preview": "nuxt preview",
-        "package": "vite build && vue-tsc"
+        "package": "vite build && vue-tsc",
+        "watch:package": "vite build --watch"
     },
     "devDependencies": {
         "@babel/core": "^7.28.4",

@@ -46,7 +46,7 @@ export const useGlobalStore = defineStore('globalStore', {
             customIFramedMsgs: {},
             splitScreenIframe: null,
             showIframeFullScreen: false,
-            disableFeedbackToast: false,
+            noFeedbackToast: false,
             speechRecognition: false,
             speechRecognitionTranscribing: false,
             speechRecognitionAutoSend: false,

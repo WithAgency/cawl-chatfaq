@@ -87,7 +87,9 @@ Next we will explain all the widget's possible parameters:
 
 `noMenu`: if the menu should be disabled.
 
-`noMaximize`: If the maximize/minimize functionality should be disabled.
+`noMaximize`: if the maximize/minimize functionality should be disabled.
+
+`noFeedbackToast`: if the feedback toast after sending feedback should be disabled. 
 
 `fitToParent`: if the widget should fit to the parent element, by default the widget will be positioned absolute to the window.
 

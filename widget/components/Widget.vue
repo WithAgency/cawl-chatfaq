@@ -70,6 +70,7 @@ const props = defineProps({
     onlyChat: Boolean,
     noMaximize: Boolean,
     noMenu: Boolean,
+    noFeedbackToast: Boolean,
     fitToParent: Boolean,
     lang: String,
     previewMode: Boolean,
@@ -241,6 +242,9 @@ function initStore() {
     }
     if (data.noMaximize) {
         store.noMaximize = true;
+    }
+    if (data.noFeedbackToast) {
+        store.noFeedbackToast = true;
     }
     if (data.fitToParent) {
         store.opened = true;

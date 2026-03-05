@@ -12,7 +12,7 @@
             <div v-if="store.opened && !isPhoneLandscape" class="widget-wrapper"
                  :class="{'history': store.historyOpened, 'full-screen': store.fullScreen, 'fit-to-parent': store.fitToParent}">
                 <div class="dark-filter" v-if="store.historyOpened"></div>
-                <LeftMenu v-if="store.historyOpened" class="widget-history"
+                <LeftMenu v-if="store.historyOpened && !store.noMenu" class="widget-history"
                           :class="{'maximized': store.maximized, 'full-screen': store.fullScreen}"/>
                 <div class="widget-body"
                      :class="{'maximized': store.maximized, 'full-screen': store.fullScreen, 'history-closed': !store.historyOpened, 'fit-to-parent': store.fitToParent}">
@@ -68,6 +68,7 @@ const props = defineProps({
     showToolMessages: Boolean,
     sourcesFirst: Boolean,
     onlyChat: Boolean,
+    noMenu: Boolean,
     fitToParent: Boolean,
     lang: String,
     previewMode: Boolean,
@@ -232,6 +233,10 @@ function initStore() {
     if (data.onlyChat) {
         store.noHeader = true;
         store.historyOpened = false;
+    }
+    if (data.noMenu) {
+        store.historyOpened = false;
+        store.noMenu = true;
     }
     if (data.fitToParent) {
         store.opened = true;

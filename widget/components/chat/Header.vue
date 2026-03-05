@@ -1,10 +1,10 @@
 <template>
     <div class="widget-wrapper-header">
-        <div class="menu-button" @click="store.historyOpened = !store.historyOpened">
+        <div v-if="!store.noMenu" class="menu-button" @click="store.historyOpened = !store.historyOpened">
             <DoubleArrowRight v-if="store.historyOpened" class="double-arrow-right"/>
             <BurgerMenu v-else class="burger-menu"/>
         </div>
-        <div class="header-text">
+        <div class="header-text" :class="{ 'no-menu': store.noMenu }">
             <div class="title"> {{ store.title }}</div>
             <div class="subtitle"> {{ store.subtitle }}</div>
         </div>
@@ -121,6 +121,10 @@ $phone-breakpoint: 600px;
         }
 
         &.header-text {
+            &.no-menu {
+                margin-left: 24px;
+            }
+
             .title {
                 font: $chatfaq-font-body-m-bold;
             }

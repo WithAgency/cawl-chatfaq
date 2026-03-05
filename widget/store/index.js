@@ -20,6 +20,7 @@ export const useGlobalStore = defineStore('globalStore', {
             noHeader: false,
             previewMode: false,
             opened: false,
+            noMenu: false,
             fitToParent: false,
             stickInputPrompt: false,
             notRenderableStackTypes: [],

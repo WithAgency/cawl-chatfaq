@@ -91,6 +91,8 @@ Next we will explain all the widget's possible parameters:
 
 `onlyChat`: if the widget should only display the chat, by default the widget displays the header and the history besides the chat.
 
+`noMenu`: if the menu should be disabled.
+
 `fitToParent`: if the widget should fit to the parent element, by default the widget will be positioned absolute to the window.
 
 `stickInputPrompt`: if the input text should be sticked to the bottom of the chat, by default the input text will be sticked to the bottom of the chat but if for instance you choose to fit the widget to the parents height then the input text can disappear from the view.

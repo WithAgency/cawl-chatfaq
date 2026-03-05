@@ -18,7 +18,7 @@
                 </div>
                 <LoaderMsg v-if="store.waitingForResponse"></LoaderMsg>
             </div>
-            <div class="alert-message" :class="{ 'fade-out': feedbackSentDisabled, 'dark-mode': store.darkMode }">
+            <div v-if="!store.disableFeedbackToast" class="alert-message" :class="{ 'fade-out': feedbackSentDisabled, 'dark-mode': store.darkMode }">
                 {{ $t("feedbacksent") }}
             </div>
             <div class="alert-message"

@@ -193,7 +193,7 @@ function addingQueryParamStack(url) {
 function shouldHideMessage() {
     if (store.showToolMessages) return false;
     const messageType = getFirstLayerType();
-    return messageType === 'tool_use' || messageType === 'tool_result' || messageType === 'fullScreenIframe';
+    return messageType === 'tool_use' || messageType === 'tool_result' || messageType === 'showIframeFullScreen';
 }
 
 onMounted(() => {
@@ -237,7 +237,7 @@ function formatToolResultLayer(layer) {
 
 function getMessageType() {
     const type = getFirstLayerType();
-        if (type === 'tool_result' || type === 'fullScreenIframe') {
+        if (type === 'tool_result' || type === 'showIframeFullScreen') {
             return 'bot';
         }
         return props.message.sender.type;

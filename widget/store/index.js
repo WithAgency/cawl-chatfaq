@@ -43,7 +43,7 @@ export const useGlobalStore = defineStore('globalStore', {
             stateOverride: undefined,
             customIFramedMsgs: {},
             splitScreenIframe: null,
-            fullScreenIframe: null,
+            showIframeFullScreen: null,
             speechRecognition: false,
             speechRecognitionTranscribing: false,
             speechRecognitionAutoSend: false,

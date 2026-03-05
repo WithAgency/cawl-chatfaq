@@ -28,7 +28,7 @@
             <ChatPrompt @send="(msg) => sendMessage(msg)"/>
         </div>
 
-        <div v-if="store.splitScreenIframe && !store.fullScreenIframe"
+        <div v-if="store.splitScreenIframe && !store.showIframeFullScreen"
              class="resizable-divider"
              @mousedown="startResize"
              :class="{'dark-mode': store.darkMode}">
@@ -88,8 +88,8 @@ watch(() => store.splitScreenIframe, () => {
         iframeContainerWidth.value = '0';
     }
 })
-watch(() => store.fullScreenIframe, () => {
-    if (store.fullScreenIframe) {
+watch(() => store.showIframeFullScreen, () => {
+    if (store.showIframeFullScreen) {
         rightContentWidth.value = '0';
         iframeContainerWidth.value = '100%';
         rightContentDisplay.value = 'none';
@@ -102,9 +102,9 @@ watch(() => store.fullScreenIframe, () => {
 watch(() => store.messages, (newMessages) => {
     if (newMessages.length === 0) return;
     const lastMsg = newMessages[newMessages.length - 1];
-    const fullScreenStack = lastMsg.stack.find(s => s.type === 'fullScreenIframe');
+    const fullScreenStack = lastMsg.stack.find(s => s.type === 'showIframeFullScreen');
     if (fullScreenStack) {
-        store.fullScreenIframe = fullScreenStack.payload.src;
+        store.showIframeFullScreen = true;
     }
 }, { deep: true });
 watch(() => store.scrollToBottom, scrollConversationDown)

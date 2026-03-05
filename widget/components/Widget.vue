@@ -76,7 +76,7 @@ const props = defineProps({
     stateOverride: String,
     customIFramedMsgs: String,
     splitScreenIframe: String,
-    fullScreenIframe: String,
+    showIframeFullScreen: Boolean,
     stickInputPrompt: Boolean,
     speechRecognition: Boolean,
     speechRecognitionLang: String,

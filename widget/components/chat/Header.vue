@@ -8,7 +8,7 @@
             <div class="title"> {{ store.title }}</div>
             <div class="subtitle"> {{ store.subtitle }}</div>
         </div>
-        <div class="maximizer" v-if="!store.fullScreen" @click="store.maximized = !store.maximized; store.scrollToBottom += 1">
+        <div class="maximizer" v-if="!store.fullScreen && !store.noMaximize" @click="store.maximized = !store.maximized; store.scrollToBottom += 1">
             <Minimize class="max-icon" v-if="store.maximized"/>
             <Maximize class="min-icon" v-else/>
         </div>

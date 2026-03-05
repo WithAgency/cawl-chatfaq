@@ -21,6 +21,7 @@ export const useGlobalStore = defineStore('globalStore', {
             previewMode: false,
             opened: false,
             noMenu: false,
+            noMaximize: false,
             fitToParent: false,
             stickInputPrompt: false,
             notRenderableStackTypes: [],

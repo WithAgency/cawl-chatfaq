@@ -68,6 +68,7 @@ const props = defineProps({
     showToolMessages: Boolean,
     sourcesFirst: Boolean,
     onlyChat: Boolean,
+    noMaximize: Boolean,
     noMenu: Boolean,
     fitToParent: Boolean,
     lang: String,
@@ -237,6 +238,9 @@ function initStore() {
     if (data.noMenu) {
         store.historyOpened = false;
         store.noMenu = true;
+    }
+    if (data.noMaximize) {
+        store.noMaximize = true;
     }
     if (data.fitToParent) {
         store.opened = true;

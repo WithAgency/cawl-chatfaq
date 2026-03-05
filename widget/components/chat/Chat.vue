@@ -28,7 +28,7 @@
             <ChatPrompt @send="(msg) => sendMessage(msg)"/>
         </div>
 
-        <div v-if="store.splitScreenIframe"
+        <div v-if="store.splitScreenIframe && !store.fullScreenIframe"
              class="resizable-divider"
              @mousedown="startResize"
              :class="{'dark-mode': store.darkMode}">
@@ -63,13 +63,15 @@ let ws = undefined
 
 // --- Resizing functionality ---
 const rightContentWidth = ref( '100%' );
+const rightContentDisplay = ref( 'flex' );
 const iframeContainerWidth = ref('0');
 const isResizing = ref(false);
 const startX = ref(0);
 const startRightWidth = ref(0);
 // Computed styles
 const rightContentStyle = computed(() => ({
-    width: rightContentWidth.value
+    width: rightContentWidth.value,
+    display: rightContentDisplay.value
 }));
 
 const iframeContainerStyle = computed(() => ({
@@ -86,6 +88,25 @@ watch(() => store.splitScreenIframe, () => {
         iframeContainerWidth.value = '0';
     }
 })
+watch(() => store.fullScreenIframe, () => {
+    if (store.fullScreenIframe) {
+        rightContentWidth.value = '0';
+        iframeContainerWidth.value = '100%';
+        rightContentDisplay.value = 'none';
+    } else {
+        rightContentWidth.value = '100%';
+        iframeContainerWidth.value = '0';
+        rightContentDisplay.value = 'initial';
+    }
+})
+watch(() => store.messages, (newMessages) => {
+    if (newMessages.length === 0) return;
+    const lastMsg = newMessages[newMessages.length - 1];
+    const fullScreenStack = lastMsg.stack.find(s => s.type === 'fullScreenIframe');
+    if (fullScreenStack) {
+        store.fullScreenIframe = fullScreenStack.payload.src;
+    }
+}, { deep: true });
 watch(() => store.scrollToBottom, scrollConversationDown)
 watch(() => store.selectedPlConversationId, createConnection)
 watch(() => store.feedbackSent, animateFeedbackSent)

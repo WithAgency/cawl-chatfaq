@@ -126,7 +126,7 @@
                             </Teleport>
                             <UserFeedback v-else :noDetails="true" :msgId="props.message.id" :msgTargetId="store.getPrevMsg(props.message, messageIsNotFeedback).id" @feedbacking="feedbacking = true" @disabled="feedbacking = false"/>
                         </div>
-                    </template>                    
+                    </template>                       
                     <template v-else>
                         <div class="layer">
                             <span>Sorry, that stack type not supported</span>
@@ -193,7 +193,7 @@ function addingQueryParamStack(url) {
 function shouldHideMessage() {
     if (store.showToolMessages) return false;
     const messageType = getFirstLayerType();
-    return messageType === 'tool_use' || messageType === 'tool_result';
+    return messageType === 'tool_use' || messageType === 'tool_result' || messageType === 'fullScreenIframe';
 }
 
 onMounted(() => {
@@ -236,11 +236,12 @@ function formatToolResultLayer(layer) {
 }
 
 function getMessageType() {
-    if (getFirstLayerType() === 'tool_result') {
-        return 'bot';
+    const type = getFirstLayerType();
+        if (type === 'tool_result' || type === 'fullScreenIframe') {
+            return 'bot';
+        }
+        return props.message.sender.type;
     }
-    return props.message.sender.type;
-}
 
 </script>
 <style scoped lang="scss">

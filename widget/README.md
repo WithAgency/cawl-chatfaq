@@ -91,6 +91,8 @@ Next we will explain all the widget's possible parameters:
 
 `noFeedbackToast`: if the feedback toast after sending feedback should be disabled. 
 
+`noCopyToClipboard`: if the copy to clipboard functionality should be disabled.
+
 `fitToParent`: if the widget should fit to the parent element, by default the widget will be positioned absolute to the window.
 
 `stickInputPrompt`: if the input text should be sticked to the bottom of the chat, by default the input text will be sticked to the bottom of the chat but if for instance you choose to fit the widget to the parents height then the input text can disappear from the view.

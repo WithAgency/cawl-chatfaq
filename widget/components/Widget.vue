@@ -71,6 +71,7 @@ const props = defineProps({
     noMaximize: Boolean,
     noMenu: Boolean,
     noFeedbackToast: Boolean,
+    noCopyToClipboard: Boolean,
     fitToParent: Boolean,
     lang: String,
     previewMode: Boolean,
@@ -245,6 +246,9 @@ function initStore() {
     }
     if (data.noFeedbackToast) {
         store.noFeedbackToast = true;
+    }
+    if (data.noCopyToClipboard) {
+        store.noCopyToClipboard = true;
     }
     if (data.fitToParent) {
         store.opened = true;

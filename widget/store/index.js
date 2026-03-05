@@ -47,6 +47,7 @@ export const useGlobalStore = defineStore('globalStore', {
             splitScreenIframe: null,
             showIframeFullScreen: false,
             noFeedbackToast: false,
+            noCopyToClipboard: false,
             speechRecognition: false,
             speechRecognitionTranscribing: false,
             speechRecognitionAutoSend: false,

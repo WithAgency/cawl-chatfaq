@@ -8,7 +8,7 @@
             <div class="feedback-controls">
                 <ThumbUp class="control" :class="{'selected': feedbackValue === 'positive', 'dark-mode': store.darkMode, 'disabled': disabled}" @click="sendUserFeedback('positive', props.noDetails ? true : false)" />
                 <ThumbDown class="control" :class="{'selected': feedbackValue === 'negative', 'dark-mode': store.darkMode, 'disabled': disabled}" @click="sendUserFeedback('negative', props.noDetails ? true : false)"/>
-                <CopyToClipboard :msg-id="msgId"/>
+                <CopyToClipboard v-if="!store.noCopyToClipboard" :msg-id="msgId"/>
             </div>
         </div>
         <div v-if="feedbacked && !disabled && !props.noDetails">

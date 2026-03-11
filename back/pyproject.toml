@@ -47,7 +47,7 @@ PyMuPDF = "*"
 channels-redis = "*"
 typefit = "*"
 ray = {extras = ["data", "serve"], version = "*"}
-chat-rag = "*"
+chat-rag = { git = "https://github.com/WithAgency/cawl-chatfaq", branch = "develop", subdirectory = "chat_rag" }
 networkx = "*"
 markdown = "*"
 procrastinate = "*"

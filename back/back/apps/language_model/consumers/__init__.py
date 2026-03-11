@@ -255,15 +255,15 @@ async def query_llm(
         llm_config = await database_sync_to_async(LLMConfig.enabled_objects.get)(
             name=llm_config_name
         )
-        # if the llm config is mistral then return an error that mistral is not supported yet
-        if llm_config.llm_type == LLMChoices.MISTRAL.value:
+        is_mistral = llm_config.llm_type == LLMChoices.MISTRAL.value
+        if is_mistral and tools and stream:
             await error_handler({
-                    "errors": "Error: Mistral is temporarily unavailable. We're working to add support for it soon. For now, please select a different model provider like OpenAI.",
-                    "llm_config_name": llm_config_name,
-                    "conversation_id": conversation_id
-                },
-                event_type="llm_config_not_found"
-            )
+                "payload": {
+                    "errors": "Error: Mistral does not currently support simultaneous tool use and streaming. Please disable streaming or remove tools to proceed.",
+                    "request_info": {"llm_config_name": llm_config_name},
+                }
+            })
+            return
     except LLMConfig.DoesNotExist:
         await error_handler({
                 "errors": f"LLM config with name: {llm_config_name} does not exist.",

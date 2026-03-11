@@ -75,6 +75,7 @@ envs:
     STORAGES_MODE: 'do'
     STORAGE_MAKE_FILES_PUBLIC: 'no'
     DO_REGION: '${{ vars::AWS_S3_REGION_NAME }}'
+    MISTRAL_API_KEY: '${{ secrets::MISTRAL_API_KEY }}'
     OPENAI_API_KEY: '${{ secrets::OPENAI_API_KEY }}'
     USE_RAY: 'False'
     BACKEND_TOKEN: '${{ secrets::BACKEND_TOKEN }}'

@@ -1,9 +1,10 @@
 import json
 import os
 from typing import Callable, Dict, List, Union
-from chat_rag.llms.types import Content, Message, ToolUse, Usage
 
+from chat_rag.llms.types import Content, Message, ToolUse, Usage
 from mistralai import Mistral
+
 
 from .base_llm import LLM
 from .format_tools import Mode, format_tools
@@ -76,7 +77,7 @@ class MistralChatModel(LLM):
 
     ...
 
-    def _map_mistral_message(self, message) -> Message:
+    def _map_mistral_message(self, message, usage_info=None) -> Message:
         """
         Map a Mistral message (from generate/agenerate/stream) to the standard Message format.
         """
@@ -99,13 +100,13 @@ class MistralChatModel(LLM):
             )
 
         usage = None
-        if hasattr(message, "usage") and message.usage:
+        if usage_info:
             usage = Usage(
-                input_tokens=message.usage.prompt_tokens,
-                output_tokens=message.usage.completion_tokens,
+                input_tokens=usage_info.prompt_tokens,
+                output_tokens=usage_info.completion_tokens,
                 cache_creation_read_tokens=getattr(
-                    message.usage.prompt_tokens_details, "cached_tokens", 0
-                ),
+                    usage_info.prompt_tokens_details, "cached_tokens", 0
+                ) if usage_info.prompt_tokens_details else 0,
             )
 
         return Message(
@@ -230,7 +231,7 @@ class MistralChatModel(LLM):
         if getattr(chat_response.choices[0], "finish_reason", None) == "tool_calls":
             return self._extract_tool_info(message)
 
-        return self._map_mistral_message(message)
+        return self._map_mistral_message(message, usage_info=chat_response.usage)
 
     async def agenerate(
         self,
@@ -275,4 +276,4 @@ class MistralChatModel(LLM):
         if chat_response.choices[0].finish_reason == "tool_calls":
             return self._extract_tool_info(message)
 
-        return self._map_mistral_message(message)
+        return self._map_mistral_message(message, usage_info=chat_response.usage)

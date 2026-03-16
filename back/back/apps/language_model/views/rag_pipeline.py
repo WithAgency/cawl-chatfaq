@@ -18,7 +18,7 @@ class LLMConfigAPIViewSet(viewsets.ModelViewSet):
     queryset = LLMConfig.objects.all()
     serializer_class = LLMConfigSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["id"]
+    filterset_fields = ["id", "name"]
     search_fields = ['name']
 
 
@@ -26,7 +26,7 @@ class RetrieverConfigAPIViewSet(viewsets.ModelViewSet):
     queryset = RetrieverConfig.objects.all()
     serializer_class = RetrieverConfigSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["id"]
+    filterset_fields = ["id", "name"]
     search_fields = ['name']
 
     @action(detail=True, url_name="trigger-reindex", url_path="trigger-reindex")
@@ -66,7 +66,7 @@ class GenerationConfigAPIViewSet(viewsets.ModelViewSet):
     queryset = GenerationConfig.objects.all()
     serializer_class = GenerationConfigSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ["id"]
+    filterset_fields = ["id", "name"]
     search_fields = ['name']
 
 

@@ -81,6 +81,7 @@ const props = defineProps({
     customIFramedMsgs: String,
     splitScreenIframe: String,
     showIframeFullScreen: Boolean,
+    showIframeFullScreenDelaySeconds: Number,
     stickInputPrompt: Boolean,
     speechRecognition: Boolean,
     speechRecognitionLang: String,
@@ -253,6 +254,9 @@ function initStore() {
     if (data.fitToParent) {
         store.opened = true;
         store.fitToParent = true;
+    }
+    if (data.showIframeFullScreenDelaySeconds) {
+        store.showIframeFullScreenDelaySeconds = data.showIframeFullScreenDelaySeconds;
     }
     i18n.locale.value = data.lang || "en";
     initialized.value = true;

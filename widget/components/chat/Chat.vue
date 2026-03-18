@@ -60,6 +60,7 @@ const feedbackSentDisabled = ref(true)
 let notRenderableStackTypes = ["gtm_tag", "close_conversation", undefined]
 notRenderableStackTypes = notRenderableStackTypes.concat(store.notRenderableStackTypes)
 let ws = undefined
+let iframeFullScreenDelayTimeout = null;
 
 // --- Resizing functionality ---
 const rightContentWidth = ref( '100%' );
@@ -88,17 +89,27 @@ watch(() => store.splitScreenIframe, () => {
         iframeContainerWidth.value = '0';
     }
 })
-watch(() => store.showIframeFullScreen, () => {
-    if (store.showIframeFullScreen) {
-        rightContentWidth.value = '0';
-        iframeContainerWidth.value = '100%';
-        rightContentDisplay.value = 'none';
-    } else {
-        rightContentWidth.value = '100%';
-        iframeContainerWidth.value = '0';
-        rightContentDisplay.value = 'initial';
+watch(
+    () => store.showIframeFullScreen,
+    (newValue) => {
+        if (iframeFullScreenDelayTimeout) {
+            clearTimeout(iframeFullScreenDelayTimeout);
+        }
+
+        if (newValue) {
+            iframeFullScreenDelayTimeout = setTimeout(() => {
+                rightContentWidth.value = '0';
+                iframeContainerWidth.value = '100%';
+                rightContentDisplay.value = 'none';
+            }, store.showIframeFullScreenDelaySeconds * 1000);
+
+        } else {
+            rightContentWidth.value = '100%';
+            iframeContainerWidth.value = '0';
+            rightContentDisplay.value = 'initial';
+        }
     }
-})
+);
 watch(() => store.messages, (newMessages) => {
     if (newMessages.length === 0) return;
     const lastMsg = newMessages[newMessages.length - 1];

@@ -255,8 +255,12 @@ function initStore() {
         store.opened = true;
         store.fitToParent = true;
     }
-    if (data.showIframeFullScreenDelaySeconds) {
-        store.showIframeFullScreenDelaySeconds = data.showIframeFullScreenDelaySeconds;
+    if (data.showIframeFullScreenDelaySeconds !== undefined && data.showIframeFullScreenDelaySeconds !== '') {
+        const parsedValue = Number(data.showIframeFullScreenDelaySeconds);
+        
+        if (!isNaN(parsedValue)) {
+            store.showIframeFullScreenDelaySeconds = parsedValue;
+        }
     }
     i18n.locale.value = data.lang || "en";
     initialized.value = true;

@@ -98,7 +98,10 @@ class ChatFAQSDK:
 
         self.sentry = None
         if SENTRY_DSN := os.getenv("SENTRY_DSN"):
-            self.sentry = sentry_sdk.init(SENTRY_DSN)
+            self.sentry = sentry_sdk.init(
+                SENTRY_DSN,
+                traces_sample_rate=float(os.getenv("SENTRY_TRACES_SAMPLE_RATE", "1.0")),
+            )
 
     def connect(self):
         try:

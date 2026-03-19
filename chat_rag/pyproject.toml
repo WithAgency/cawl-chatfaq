@@ -34,6 +34,7 @@ umap-learn = {version = "^0.5.6", optional = true}
 bm25s = {version = "^0.1.7", optional = true}
 google-genai = "^1.38.0"
 pillow = "^11.1.0"
+sentry-sdk = "^2.20.0"
 together = "^1.5.13"
 
 [tool.poetry.extras]

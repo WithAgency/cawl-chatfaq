@@ -752,7 +752,7 @@ full = ["accelerate (>=0.31.0,<0.32.0)", "bm25s (>=0.1.7,<0.2.0)", "einops (>=0.
 type = "git"
 url = "https://github.com/WithAgency/cawl-chatfaq"
 reference = "develop"
-resolved_reference = "a7dde1a6d3852044537028a81b15df68c44a7619"
+resolved_reference = "f57668551686e2bba933aac4fd7efc320b624f89"
 subdirectory = "chat_rag"
 
 [[package]]

@@ -4,7 +4,6 @@ from typing import Callable, Dict, List, Union
 
 from chat_rag.llms.types import Content, Message, ToolUse, Usage
 from mistralai import Mistral
-import sentry_sdk
 
 
 from .base_llm import LLM
@@ -107,9 +106,7 @@ class MistralChatModel(LLM):
                 output_tokens=usage_info.completion_tokens,
                 cache_creation_read_tokens=getattr(
                     usage_info.prompt_tokens_details, "cached_tokens", 0
-                )
-                if usage_info.prompt_tokens_details
-                else 0,
+                ) if usage_info.prompt_tokens_details else 0,
             )
 
         return Message(
@@ -191,7 +188,6 @@ class MistralChatModel(LLM):
             if content is not None:
                 yield content
 
-    @sentry_sdk.trace(op="llm.generate", name="MistralChatModel.generate")
     def generate(
         self,
         messages: List[Dict[str, str]],
@@ -221,13 +217,6 @@ class MistralChatModel(LLM):
         if tools:
             tools, tool_choice = self._format_tools(tools, tool_choice)
 
-        sentry_sdk.update_current_span(
-            attributes={
-                "gen_ai.request.model": self.llm_name,
-                "gen_ai.request.messages": json.dumps(messages),
-                "gen_ai.operation.name": "MistralChatModel.generate",
-            }
-        )
         chat_response = self.client.chat.complete(
             model=self.llm_name,
             messages=messages,
@@ -242,19 +231,8 @@ class MistralChatModel(LLM):
         if getattr(chat_response.choices[0], "finish_reason", None) == "tool_calls":
             return self._extract_tool_info(message)
 
-        usage_info = getattr(chat_response, "usage", None)
-        if usage_info:
-            sentry_sdk.update_current_span(
-                attributes={
-                    "gen_ai.response.text": json.dumps(message.content),
-                    "gen_ai.usage.input_tokens": usage_info.prompt_tokens,
-                    "gen_ai.usage.output_tokens": usage_info.completion_tokens,
-                }
-            )
+        return self._map_mistral_message(message, usage_info=chat_response.usage)
 
-        return self._map_mistral_message(message, usage_info=usage_info)
-
-    @sentry_sdk.trace(op="llm.agenerate", name="MistralChatModel.agenerate")
     async def agenerate(
         self,
         messages: List[Dict[str, str]],
@@ -284,13 +262,6 @@ class MistralChatModel(LLM):
         if tools:
             tools, tool_choice = self._format_tools(tools, tool_choice)
 
-        sentry_sdk.update_current_span(
-            attributes={
-                "gen_ai.request.model": self.llm_name,
-                "gen_ai.request.messages": json.dumps(messages),
-                "gen_ai.operation.name": "MistralChatModel.generate",
-            }
-        )
         chat_response = await self.client.chat.complete_async(
             model=self.llm_name,
             messages=messages,
@@ -305,13 +276,4 @@ class MistralChatModel(LLM):
         if chat_response.choices[0].finish_reason == "tool_calls":
             return self._extract_tool_info(message)
 
-        usage_info = getattr(chat_response, "usage", None)
-        if usage_info:
-            sentry_sdk.update_current_span(
-                attributes={
-                    "gen_ai.response.text": json.dumps(message.content),
-                    "gen_ai.usage.input_tokens": usage_info.prompt_tokens,
-                    "gen_ai.usage.output_tokens": usage_info.completion_tokens,
-                }
-            )
-        return self._map_mistral_message(message, usage_info=usage_info)
+        return self._map_mistral_message(message, usage_info=chat_response.usage)

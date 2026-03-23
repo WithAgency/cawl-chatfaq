@@ -11,8 +11,11 @@ isort:
 	$(PYTHON_BIN) -m isort chatfaq_sdk
 	$(PYTHON_BIN) -m isort examples
 
-run_example:
+run_rag_example:
 	$(PYTHON_BIN) examples/rag_example/__main__.py
+
+run_llm_example:
+	$(PYTHON_BIN) examples/llm_example/__main__.py
 
 run_holidays:
 	$(PYTHON_BIN) examples/holidays/__main__.py

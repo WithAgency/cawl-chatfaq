@@ -1,6 +1,8 @@
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
-from back.common.models import ChangesMixin
 from django.utils import timezone
+
+from back.common.models import ChangesMixin
 
 
 class ConsumerRoundRobinQueue(ChangesMixin):
@@ -92,3 +94,17 @@ class RemoteSDKParsers(ChangesMixin):
 
     def __str__(self):
         return self.parser_name
+
+
+class ConversationFeedback(ChangesMixin):
+    """Store the feedback given by the users on the conversations."""
+
+    conversation = models.ForeignKey(
+        "broker.Conversation", on_delete=models.CASCADE, related_name="feedbacks"
+    )
+    tags = ArrayField(models.CharField(max_length=1000), default=list, blank=True)
+    comment = models.TextField(blank=True, default="")
+
+    class Meta:
+        verbose_name = "Conversation Feedback"
+        verbose_name_plural = "Conversation Feedback"

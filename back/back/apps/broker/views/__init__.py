@@ -1,8 +1,10 @@
+import logging
 from datetime import datetime
 from io import BytesIO
 from zipfile import ZipFile
 
 import django_filters
+from django.conf import settings
 from django.db.models import Avg, Count, Q
 from django.db.models.functions import Trunc
 from django.http import HttpResponse, JsonResponse
@@ -19,17 +21,20 @@ from rest_framework.viewsets import GenericViewSet
 from back.config.storage_backends import select_private_storage
 
 from ...language_model.stats import calculate_general_stats, calculate_response_stats
-from ..models import ConsumerRoundRobinQueue
+from ..models import ConsumerRoundRobinQueue, ConversationFeedback
 from ..models.message import AdminReview, AgentType, Conversation, Message, UserFeedback
 from ..serializers import (
     AdminReviewSerializer,
     ConsumerRoundRobinQueueSerializer,
+    ConversationFeedbackSerializer,
     ConversationMessagesSerializer,
     ConversationSerializer,
     StatsSerializer,
     UserFeedbackSerializer,
 )
 from ..serializers.messages import MessageSerializer
+
+logger = logging.getLogger(__name__)
 
 
 class ConversationFilterSet(django_filters.FilterSet):
@@ -312,6 +317,59 @@ class Stats(APIView):
             },
             safe=False,
         )
+
+
+class ConversationFeedbackView(CreateAPIView):
+    """API View for submitting user feedback on conversations."""
+
+    serializer_class = ConversationFeedbackSerializer
+    permission_classes = [AllowAny]
+
+    def perform_create(self, serializer: ConversationFeedbackSerializer):
+        feedback = serializer.save()
+        self._send_to_laminar(feedback)
+
+    def _send_to_laminar(self, feedback: ConversationFeedback):
+        """Send feedback data to Laminar for monitoring and analysis."""
+
+        from lmnr import Laminar
+
+        api_key = settings.LMNR_PROJECT_API_KEY
+        base_url = settings.LMNR_BASE_URL
+
+        if not api_key or not base_url:
+            logger.info("Laminar API key or base URL not set. Skipping integration.")
+            return
+
+        Laminar.initialize(
+            project_api_key=api_key,
+            base_url=base_url,
+            grpc_port=settings.LMNR_GRPC_PORT,
+            http_port=settings.LMNR_HTTP_PORT,
+        )
+
+        span = None
+        try:
+            span = Laminar.start_span(
+                input=feedback.comment if feedback.comment else None,
+                name="internal_tester_feedback",
+            )
+
+            with Laminar.use_span(span):
+                Laminar.set_trace_session_id(
+                    feedback.conversation.platform_conversation_id
+                )
+
+                span.set_attribute("lmnr.span.type", "feedback")
+                span.set_attribute("feedback.source", "diagnostic_grid_v1")
+                span.set_attribute("feedback.tags", feedback.tags)
+                span.set_attribute("feedback.comment", feedback.comment)
+
+        except Exception:
+            logger.exception("Error occurred while sending feedback to Laminar")
+        finally:
+            if span:
+                span.end()
 
 
 class FileUploadView(APIView):

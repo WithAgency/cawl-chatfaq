@@ -142,9 +142,9 @@ async function submitFeedback() {
 .conversation-feedback {
     .feedback-toggle {
         cursor: pointer;
-        background: $chatfaq-color-chatMessageHuman-background-light;
-        color: $chatfaq-color-chatMessageHuman-text-light;
-        font: $chatfaq-font-button;
+        background: $chatfaq-color-feedbackToggle-background;
+        color: $chatfaq-color-feedbackToggle-text;
+        font: $chatfaq-feedbackToggle-font;
         padding: 8px 16px;
         border-radius: 100px;
         white-space: nowrap;
@@ -167,7 +167,7 @@ async function submitFeedback() {
     }
 
     .feedback-panel {
-        background: $chatfaq-color-neutral-white;
+        background: $chatfaq-color-feedbackPanel-background;
         border-radius: 16px;
         width: 520px;
         max-width: calc(100vw - 32px);
@@ -180,8 +180,8 @@ async function submitFeedback() {
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 
         &.dark-mode {
-            background: $chatfaq-color-primary-800;
-            color: $chatfaq-color-neutral-white;
+            background: $chatfaq-color-feedbackPanel-background-dark;
+            color: $chatfaq-color-feedbackPanel-text-dark;
         }
     }
 
@@ -193,25 +193,25 @@ async function submitFeedback() {
         h3 {
             font: $chatfaq-font-body-m-bold;
             margin: 0;
-            color: $chatfaq-color-neutral-black;
+            color: $chatfaq-color-feedbackPanel-title-text;
 
             .dark-mode & {
-                color: $chatfaq-color-neutral-white;
+                color: $chatfaq-color-feedbackPanel-title-text-dark;
             }
         }
 
         .close-icon {
             cursor: pointer;
-            color: $chatfaq-color-greyscale-600;
+            color: $chatfaq-color-feedbackCloseIcon-color;
             width: 24px;
             height: 24px;
             flex-shrink: 0;
 
             &:hover {
-                color: $chatfaq-color-neutral-black;
+                color: $chatfaq-color-feedbackCloseIcon-hoverColor;
 
                 .dark-mode & {
-                    color: $chatfaq-color-neutral-white;
+                    color: $chatfaq-color-feedbackCloseIcon-hoverColor-dark;
                 }
             }
         }
@@ -219,12 +219,12 @@ async function submitFeedback() {
 
     .panel-desc {
         font: $chatfaq-font-body-s;
-        color: $chatfaq-color-neutral-black;
+        color: $chatfaq-color-feedbackPanel-desc-text;
         margin: 0;
         line-height: 1.5;
 
         .dark-mode & {
-            color: $chatfaq-color-primary-200;
+            color: $chatfaq-color-feedbackPanel-desc-text-dark;
         }
     }
 
@@ -241,40 +241,40 @@ async function submitFeedback() {
         padding: 6px 12px;
         border-radius: 8px;
         cursor: pointer;
-        background: $chatfaq-color-neutral-white;
-        border: 1px solid $chatfaq-color-chatInput-border-light;
+        background: $chatfaq-color-feedbackTag-background;
+        border: 1px solid $chatfaq-color-feedbackTag-border;
         transition: all 0.15s ease;
         user-select: none;
 
         &.dark-mode {
-            background: transparent;
-            border-color: $chatfaq-color-primary-500;
+            background: $chatfaq-color-feedbackTag-background-dark;
+            border-color: $chatfaq-color-feedbackTag-border-dark;
         }
 
         &:hover {
-            border-color: $chatfaq-color-primary-500;
-            background: $chatfaq-color-transparent-primary-10;
+            border-color: $chatfaq-color-feedbackTag-hoverBorder;
+            background: $chatfaq-color-feedbackTag-hoverBackground;
         }
 
         &.selected {
-            background: $chatfaq-color-primary-500;
-            border-color: $chatfaq-color-primary-500;
+            background: $chatfaq-color-feedbackTag-selectedBackground;
+            border-color: $chatfaq-color-feedbackTag-selectedBorder;
 
             .tag-label {
-                color: $chatfaq-color-neutral-white;
+                color: $chatfaq-color-feedbackTag-selectedLabelText;
             }
 
             .tag-checkbox {
-                background: $chatfaq-color-neutral-white;
-                border-color: $chatfaq-color-neutral-white;
+                background: $chatfaq-color-feedbackTag-selectedCheckboxBackground;
+                border-color: $chatfaq-color-feedbackTag-selectedCheckboxBorder;
 
                 .check-icon {
-                    color: $chatfaq-color-primary-500;
+                    color: $chatfaq-color-feedbackTag-selectedCheckIcon;
                 }
             }
 
             .tag-info-icon {
-                color: $chatfaq-color-neutral-white;
+                color: $chatfaq-color-feedbackTag-selectedInfoIcon;
             }
         }
     }
@@ -282,7 +282,7 @@ async function submitFeedback() {
     .tag-checkbox {
         width: 16px;
         height: 16px;
-        border: 1.5px solid $chatfaq-color-chatInput-border-light;
+        border: 1.5px solid $chatfaq-color-feedbackCheckbox-border;
         border-radius: 3px;
         display: flex;
         align-items: center;
@@ -291,7 +291,7 @@ async function submitFeedback() {
         transition: all 0.15s ease;
 
         .dark-mode & {
-            border-color: $chatfaq-color-primary-500;
+            border-color: $chatfaq-color-feedbackCheckbox-border-dark;
         }
 
         .check-icon {
@@ -302,23 +302,23 @@ async function submitFeedback() {
 
     .tag-label {
         font: $chatfaq-font-body-s;
-        color: $chatfaq-color-primary-500;
+        color: $chatfaq-color-feedbackTagLabel-text;
         white-space: nowrap;
 
         .dark-mode & {
-            color: $chatfaq-color-primary-200;
+            color: $chatfaq-color-feedbackTagLabel-text-dark;
         }
     }
 
     .tag-info-icon {
-        color: $chatfaq-color-greyscale-600;
+        color: $chatfaq-color-feedbackInfoIcon-color;
         width: 16px;
         height: 16px;
         flex-shrink: 0;
         cursor: help;
 
         .dark-mode & {
-            color: $chatfaq-color-primary-500;
+            color: $chatfaq-color-feedbackInfoIcon-color-dark;
         }
     }
 
@@ -327,34 +327,34 @@ async function submitFeedback() {
 
         .comment-input {
             width: 100%;
-            border: 1px solid $chatfaq-color-chatInput-border-light;
+            border: 1px solid $chatfaq-color-feedbackInput-border;
             border-radius: 8px;
             padding: 12px 16px;
             font: $chatfaq-font-body-s;
-            color: $chatfaq-color-neutral-black;
-            background: $chatfaq-color-neutral-white;
+            color: $chatfaq-color-feedbackInput-text;
+            background: $chatfaq-color-feedbackInput-background;
             resize: none;
             box-sizing: border-box;
             line-height: 1.5;
 
             &.dark-mode {
-                background: $chatfaq-color-primary-900;
-                border-color: $chatfaq-color-primary-500;
-                color: $chatfaq-color-neutral-white;
+                background: $chatfaq-color-feedbackInput-background-dark;
+                border-color: $chatfaq-color-feedbackInput-border-dark;
+                color: $chatfaq-color-feedbackInput-text-dark;
             }
 
             &::placeholder {
-                color: $chatfaq-color-chatPlaceholder-text-light;
+                color: $chatfaq-color-feedbackInput-placeholder;
                 font-style: italic;
 
                 .dark-mode & {
-                    color: $chatfaq-color-chatPlaceholder-text-dark;
+                    color: $chatfaq-color-feedbackInput-placeholder-dark;
                 }
             }
 
             &:focus {
                 outline: none;
-                border-color: $chatfaq-color-primary-500;
+                border-color: $chatfaq-color-feedbackInput-focusBorder;
             }
         }
 
@@ -363,15 +363,15 @@ async function submitFeedback() {
             bottom: 8px;
             right: 12px;
             font-size: 11px;
-            color: $chatfaq-color-greyscale-600;
+            color: $chatfaq-color-feedbackCharCount-color;
         }
     }
 
     .send-btn {
         align-self: flex-end;
         cursor: pointer;
-        background: $chatfaq-color-primary-500;
-        color: $chatfaq-color-neutral-white;
+        background: $chatfaq-color-feedbackSendButton-background;
+        color: $chatfaq-color-feedbackSendButton-text;
         font: $chatfaq-font-button;
         font-size: 14px;
         padding: 10px 24px;
@@ -390,7 +390,7 @@ async function submitFeedback() {
         }
 
         &.dark-mode {
-            background: $chatfaq-color-primary-500;
+            background: $chatfaq-color-feedbackSendButton-background-dark;
         }
     }
 }

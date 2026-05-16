@@ -217,6 +217,7 @@
     --chatfaq-color-feedbackSendButton-background: var(--chatfaq-color-primary-500);
     --chatfaq-color-feedbackSendButton-background-dark: var(--chatfaq-color-primary-500);
     --chatfaq-color-feedbackSendButton-text: var(--chatfaq-color-neutral-white);
+    --chatfaq-color-feedbackBackdrop: var(--chatfaq-color-transparent-neutral-black-70);
 
     --chatfaq-color-scrollBar-dark: var(--chatfaq-color-primary-500);
     --chatfaq-color-scrollBar-light: var(--chatfaq-color-neutral-white);
@@ -415,6 +416,7 @@ $chatfaq-color-feedbackCharCount-color: var(--chatfaq-color-feedbackCharCount-co
 $chatfaq-color-feedbackSendButton-background: var(--chatfaq-color-feedbackSendButton-background);
 $chatfaq-color-feedbackSendButton-background-dark: var(--chatfaq-color-feedbackSendButton-background-dark);
 $chatfaq-color-feedbackSendButton-text: var(--chatfaq-color-feedbackSendButton-text);
+$chatfaq-color-feedbackBackdrop: var(--chatfaq-color-feedbackBackdrop);
 
 $chatfaq-color-codeBlock-header-background-light: var(--chatfaq-color-codeBlock-header-background-light);
 $chatfaq-color-codeBlock-header-background-dark: var(--chatfaq-color-codeBlock-header-background-dark);

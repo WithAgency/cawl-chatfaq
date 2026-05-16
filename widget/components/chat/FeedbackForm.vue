@@ -27,10 +27,10 @@
                         </div>
                         <span class="tag-label">{{ $t(tag.label) }}</span>
                         <div class="tag-info-icon" :title="$t(tag.hover)">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                                <circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/>
-                                <path d="M8 5V8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                <circle cx="8" cy="11" r="0.75" fill="currentColor"/>
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M10 6.5V10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                <circle cx="10" cy="13.5" r="1" fill="currentColor"/>
                             </svg>
                         </div>
                     </div>
@@ -145,11 +145,10 @@ async function submitFeedback() {
         background: $chatfaq-color-feedbackToggle-background;
         color: $chatfaq-color-feedbackToggle-text;
         font: $chatfaq-feedbackToggle-font;
-        padding: 8px 16px;
+        padding: 10px 20px;
         border-radius: 100px;
         white-space: nowrap;
-        font-size: 12px;
-        text-transform: uppercase;
+        font-size: 14px;
 
         &:hover {
             opacity: 0.9;
@@ -157,10 +156,12 @@ async function submitFeedback() {
     }
 
     .feedback-backdrop {
-        position: fixed;
+        position: absolute;
         inset: 0;
         z-index: 10000;
-        background: $chatfaq-color-darkFilter;
+        background: $chatfaq-color-feedbackBackdrop;
+        backdrop-filter: blur(6px);
+        border-radius: 9px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -168,12 +169,12 @@ async function submitFeedback() {
 
     .feedback-panel {
         background: $chatfaq-color-feedbackPanel-background;
-        border-radius: 16px;
+        border-radius: 20px;
         width: 520px;
         max-width: calc(100vw - 32px);
         max-height: calc(100vh - 32px);
         overflow-y: auto;
-        padding: 28px;
+        padding: 24px;
         display: flex;
         flex-direction: column;
         gap: 16px;
@@ -237,7 +238,7 @@ async function submitFeedback() {
     .tag-chip {
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 10px;
         padding: 6px 12px;
         border-radius: 8px;
         cursor: pointer;
@@ -280,10 +281,10 @@ async function submitFeedback() {
     }
 
     .tag-checkbox {
-        width: 16px;
-        height: 16px;
-        border: 1.5px solid $chatfaq-color-feedbackCheckbox-border;
-        border-radius: 3px;
+        width: 12px;
+        height: 12px;
+        border: 1px solid $chatfaq-color-feedbackCheckbox-border;
+        border-radius: 2px;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -312,8 +313,8 @@ async function submitFeedback() {
 
     .tag-info-icon {
         color: $chatfaq-color-feedbackInfoIcon-color;
-        width: 16px;
-        height: 16px;
+        width: 20px;
+        height: 20px;
         flex-shrink: 0;
         cursor: help;
 
@@ -328,8 +329,9 @@ async function submitFeedback() {
         .comment-input {
             width: 100%;
             border: 1px solid $chatfaq-color-feedbackInput-border;
-            border-radius: 8px;
-            padding: 12px 16px;
+            border-radius: 4px;
+            padding: 10px 16px;
+            min-height: 74px;
             font: $chatfaq-font-body-s;
             color: $chatfaq-color-feedbackInput-text;
             background: $chatfaq-color-feedbackInput-background;
@@ -368,7 +370,7 @@ async function submitFeedback() {
     }
 
     .send-btn {
-        align-self: flex-end;
+        align-self: flex-start;
         cursor: pointer;
         background: $chatfaq-color-feedbackSendButton-background;
         color: $chatfaq-color-feedbackSendButton-text;

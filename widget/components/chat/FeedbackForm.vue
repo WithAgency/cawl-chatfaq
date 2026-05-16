@@ -26,12 +26,21 @@
                             <Check v-if="selectedTags.includes(tag.key)" class="check-icon" />
                         </div>
                         <span class="tag-label">{{ $t(tag.label) }}</span>
-                        <div class="tag-info-icon" :title="$t(tag.hover)">
+                        <div
+                            class="tag-info-icon"
+                            @mouseenter="activeTooltip = tag.key"
+                            @mouseleave="activeTooltip = null"
+                            @click.stop="toggleTooltip(tag.key)"
+                        >
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                                 <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/>
                                 <path d="M10 6.5V10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                 <circle cx="10" cy="13.5" r="1" fill="currentColor"/>
                             </svg>
+                            <div v-if="activeTooltip === tag.key" class="tooltip-popup">
+                                {{ $t(tag.hover) }}
+                                <div class="tooltip-arrow"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -71,6 +80,7 @@ const showForm = ref(false);
 const submitting = ref(false);
 const selectedTags = ref([]);
 const comment = ref("");
+const activeTooltip = ref(null);
 
 const tags = [
     { key: "wrong_business_logic", label: "tag_wrong_business_logic", hover: "tag_wrong_business_logic_hover" },
@@ -93,6 +103,13 @@ function toggleTag(key) {
         selectedTags.value.push(key);
     else
         selectedTags.value.splice(idx, 1);
+}
+
+function toggleTooltip(key) {
+    if (activeTooltip.value === key)
+        activeTooltip.value = null;
+    else
+        activeTooltip.value = key;
 }
 
 function closePanel() {
@@ -317,10 +334,41 @@ async function submitFeedback() {
         height: 20px;
         flex-shrink: 0;
         cursor: help;
+        position: relative;
 
         .dark-mode & {
             color: $chatfaq-color-feedbackInfoIcon-color-dark;
         }
+    }
+
+    .tooltip-popup {
+        position: absolute;
+        bottom: calc(100% + 8px);
+        left: 50%;
+        transform: translateX(-50%);
+        background: $chatfaq-color-feedbackTooltip-background;
+        border: 1px solid $chatfaq-color-feedbackTooltip-border;
+        border-radius: 8px;
+        padding: 6px 12px;
+        width: 235px;
+        font: $chatfaq-font-feedbackTooltip;
+        color: $chatfaq-color-feedbackTooltip-text;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+        z-index: 10001;
+        pointer-events: none;
+    }
+
+    .tooltip-arrow {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 8.5px;
+        height: 8.5px;
+        background: $chatfaq-color-feedbackTooltip-background;
+        border-right: 1px solid $chatfaq-color-feedbackTooltip-border;
+        border-bottom: 1px solid $chatfaq-color-feedbackTooltip-border;
+        margin-top: -4.25px;
     }
 
     .comment-wrapper {

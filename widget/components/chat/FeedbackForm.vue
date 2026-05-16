@@ -8,7 +8,7 @@
             {{ $t('conversation_feedback_evaluate') }}
         </div>
         <div v-if="showForm" class="feedback-backdrop" @click.self="closePanel">
-            <div class="feedback-panel" :class="{ 'dark-mode': store.darkMode }">
+            <div class="feedback-panel" :class="{ 'dark-mode': store.darkMode }" @click.self="closeTooltip">
                 <div class="panel-header">
                     <h3>{{ $t('conversation_feedback_title') }}</h3>
                     <Close class="close-icon" @click="closePanel" />
@@ -37,7 +37,7 @@
                                 <path d="M10 6.5V10.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                                 <circle cx="10" cy="13.5" r="1" fill="currentColor"/>
                             </svg>
-                            <div v-if="activeTooltip === tag.key" class="tooltip-popup">
+                            <div v-if="activeTooltip === tag.key" ref="tooltipRef" class="tooltip-popup" :style="tooltipStyle">
                                 {{ $t(tag.hover) }}
                                 <div class="tooltip-arrow"></div>
                             </div>
@@ -69,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
 import { useGlobalStore } from "~/store";
 import Close from "~/components/icons/Close.vue";
 import Check from "~/components/icons/Check.vue";
@@ -81,6 +81,27 @@ const submitting = ref(false);
 const selectedTags = ref([]);
 const comment = ref("");
 const activeTooltip = ref(null);
+const tooltipRef = ref(null);
+const tooltipStyle = ref({});
+
+watch(activeTooltip, async () => {
+    tooltipStyle.value = {};
+    if (activeTooltip.value) {
+        await nextTick();
+        const el = Array.isArray(tooltipRef.value) ? tooltipRef.value[0] : tooltipRef.value;
+        if (el) {
+            const rect = el.getBoundingClientRect();
+            const shift = { x: 0 };
+            const margin = 24;
+            if (rect.right > window.innerWidth - margin)
+                shift.x = window.innerWidth - margin - rect.right;
+            if (rect.left < margin)
+                shift.x = margin - rect.left;
+            if (shift.x)
+                tooltipStyle.value = { transform: `translateX(calc(-50% + ${shift.x}px))` };
+        }
+    }
+});
 
 const tags = [
     { key: "wrong_business_logic", label: "tag_wrong_business_logic", hover: "tag_wrong_business_logic_hover" },
@@ -114,6 +135,11 @@ function toggleTooltip(key) {
 
 function closePanel() {
     showForm.value = false;
+    activeTooltip.value = null;
+}
+
+function closeTooltip() {
+    activeTooltip.value = null;
 }
 
 async function submitFeedback() {

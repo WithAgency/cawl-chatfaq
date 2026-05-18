@@ -344,6 +344,6 @@ with EnvManager(model_w_django) as env:
 
     # --------------------------- Laminar ---------------------------
     LMNR_PROJECT_API_KEY = env.get("LMNR_PROJECT_API_KEY", default=None)
-    LAMINAR_BASE_URL = env.get("LAMINAR_BASE_URL", default="https://api.lmnr.ai")
-    LAMINAR_GRPC_PORT = env.get("LAMINAR_GRPC_PORT", default=8443)
-    LAMINAR_HTTP_PORT = env.get("LAMINAR_HTTP_PORT", default=443)
+    LMNR_BASE_URL = env.get("LMNR_BASE_URL", default="https://api.lmnr.ai")
+    LMNR_GRPC_PORT = env.get("LMNR_GRPC_PORT", default=8443)
+    LMNR_HTTP_PORT = env.get("LMNR_HTTP_PORT", default=443)

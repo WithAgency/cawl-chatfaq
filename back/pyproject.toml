@@ -11,7 +11,7 @@ packages = [
 
 [tool.poetry.dependencies]
 python = "~3.13"
-modelw-preset-django = {version = "*", extras = ["health"]}
+modelw-preset-django = {version = "~2025.10.0", extras = ["health"]}
 drf-spectacular = {extras = ["sidecar"], version = "*"}
 channels = "*"
 daphne = "*"
@@ -51,6 +51,7 @@ chat-rag = { git = "https://github.com/WithAgency/cawl-chatfaq", branch = "devel
 networkx = "*"
 markdown = "*"
 procrastinate = "*"
+lmnr = "^0.7.51"
 [tool.poetry.group.dev.dependencies]
 black = "*"
 isort = "*"

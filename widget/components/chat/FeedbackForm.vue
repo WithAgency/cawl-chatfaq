@@ -220,7 +220,6 @@ async function submitFeedback() {
         padding: 24px;
         display: flex;
         flex-direction: column;
-        gap: 16px;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
 
         &.dark-mode {
@@ -235,7 +234,7 @@ async function submitFeedback() {
         justify-content: space-between;
 
         h3 {
-            font: $chatfaq-font-body-m-bold;
+            font: $chatfaq-font-feedbackPanel-title-text;
             margin: 0;
             color: $chatfaq-color-feedbackPanel-title-text;
 
@@ -276,6 +275,7 @@ async function submitFeedback() {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
+        margin: 16px 0;
     }
 
     .tag-chip {
@@ -455,6 +455,7 @@ async function submitFeedback() {
         border-radius: 100px;
         text-transform: uppercase;
         transition: opacity 0.15s ease;
+        margin-top: 16px;
 
         &:hover:not(.disabled) {
             opacity: 0.9;

@@ -79,3 +79,7 @@ envs:
     OPENAI_API_KEY: '${{ secrets::OPENAI_API_KEY }}'
     USE_RAY: 'False'
     BACKEND_TOKEN: '${{ secrets::BACKEND_TOKEN }}'
+    LMNR_PROJECT_API_KEY: '${{ secrets::LMNR_PROJECT_API_KEY }}'
+    LMNR_BASE_URL: '${{ vars::LMNR_BASE_URL }}'
+    LMNR_GRPC_PORT: '${{ vars::LMNR_GRPC_PORT }}'
+    LMNR_HTTP_PORT: '${{ vars::LMNR_HTTP_PORT }}'

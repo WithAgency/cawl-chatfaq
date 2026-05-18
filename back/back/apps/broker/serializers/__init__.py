@@ -1,5 +1,6 @@
 from django.apps import apps
 from rest_framework import serializers
+from rest_framework.exceptions import NotFound
 
 from back.apps.broker.models.message import Message, AdminReviewValue, AgentType
 from back.apps.fsm.models import FSMDefinition
@@ -11,6 +12,37 @@ class IdSerializer(serializers.Serializer):
 
 class IdsSerializer(serializers.Serializer):
     ids = serializers.ListSerializer(child=serializers.CharField(max_length=255))
+
+
+class ConversationFeedbackSerializer(serializers.ModelSerializer):
+    """Serializer for ConversationFeedback model."""
+    conversation_id = serializers.CharField(write_only=True)
+
+    class Meta:
+        model = apps.get_model("broker", "ConversationFeedback")
+        fields = [
+            "id",
+            "conversation_id",
+            "tags",
+            "comment",
+            "created_date",
+            "updated_date",
+        ]
+        read_only_fields = ["id", "created_date", "updated_date"]
+
+    def create(self, validated_data):
+        platform_id = validated_data.pop("conversation_id")
+        Conversation = apps.get_model("broker", "Conversation")
+        try:
+            conversation = Conversation.objects.get(
+                platform_conversation_id=platform_id
+            )
+        except Conversation.DoesNotExist:
+            raise NotFound(f"Conversation with platform_id '{platform_id}' not found.")
+
+        return apps.get_model("broker", "ConversationFeedback").objects.create(
+            conversation=conversation, **validated_data
+        )
 
 
 class UserFeedbackSerializer(serializers.ModelSerializer):

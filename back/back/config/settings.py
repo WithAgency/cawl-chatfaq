@@ -342,3 +342,8 @@ with EnvManager(model_w_django) as env:
     INTERNAL_WS_URL = env.get("INTERNAL_WS_URL", default="ws://localhost:8000")
     BACKEND_TOKEN = env.get("BACKEND_TOKEN", default="")
 
+    # --------------------------- Laminar ---------------------------
+    LMNR_PROJECT_API_KEY = env.get("LMNR_PROJECT_API_KEY", default=None)
+    LMNR_BASE_URL = env.get("LMNR_BASE_URL", default="https://api.lmnr.ai")
+    LMNR_GRPC_PORT = env.get("LMNR_GRPC_PORT", default=8443)
+    LMNR_HTTP_PORT = env.get("LMNR_HTTP_PORT", default=443)

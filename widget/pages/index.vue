@@ -4,6 +4,7 @@
                 :subtitle="subtitle" enable-logout :allow-attachments="true"
                 :hideSources="hideSources" :stateOverride="stateOverride" :widgetConfigId="widgetId"
                 splitScreenIframe="http://localhost:3001/right-panel"
+                :enable-conversation-feedback="true"
         />
     </client-only>
 </template>

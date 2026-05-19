@@ -31,7 +31,7 @@
     "copied": "Copié !",
     "conversation_feedback_evaluate": "Évaluer la conversation",
     "conversation_feedback_title": "Évaluer la conversation",
-    "conversation_feedback_desc": "Aidez-nous à nous améliorer en sélectionnant les catégories qui s'appliquent à cette conversation. Vous pouvez en sélectionner plusieurs.",
+    "conversation_feedback_desc": "Pour remonter une anomalie, sélectionnez une ou plusieurs catégories, puis complétez votre retour avec un commentaire.",
     "conversation_feedback_comment_placeholder": "Ajouter un commentaire (optionnel)",
     "conversation_feedback_send": "Envoyer",
     "conversation_feedback_submitted": "Merci pour votre retour !",

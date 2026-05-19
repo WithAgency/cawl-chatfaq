@@ -31,7 +31,7 @@
     "copied": "Copied!",
     "conversation_feedback_evaluate": "Evaluate the conversation",
     "conversation_feedback_title": "Evaluate the conversation",
-    "conversation_feedback_desc": "Help us improve by selecting the categories that apply to this conversation. You can select more than one.",
+    "conversation_feedback_desc": "To report an issue, select one or more categories, then complete your feedback with a comment.",
     "conversation_feedback_comment_placeholder": "Add a comment (optional)",
     "conversation_feedback_send": "Send",
     "conversation_feedback_submitted": "Feedback sent successfully!",

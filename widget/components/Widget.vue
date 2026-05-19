@@ -100,7 +100,8 @@ const props = defineProps({
     speechSynthesisRate: Number,
     speechSynthesisVoices: String,
     speechSynthesisEnabledByDefault: Boolean,
-    notRenderableStackTypes: String
+    notRenderableStackTypes: String,
+    enableConversationFeedback: Boolean,
 });
 
 const jsonProps = [
@@ -214,6 +215,7 @@ function initStore() {
     store.initialConversationMetadata = data.initialConversationMetadata
     store.stateOverride = data.stateOverride
     store.notRenderableStackTypes = data.notRenderableStackTypes
+    store.enableConversationFeedback = data.enableConversationFeedback
 
     store.fsmDef = data.fsmDef;
     store.title = data.title;

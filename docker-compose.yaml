@@ -15,6 +15,11 @@ services:
       - POSTGRES_DB=chatfaq
     networks:
       - chatfaq_db_net
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "chatfaq"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   redis:
     image: redis:6.2-alpine
     hostname: redis
@@ -22,9 +27,13 @@ services:
     #   - '6379:6379'
     networks:
       - chatfaq_db_net
-    # command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
-    # volumes:
-    #   - cache:/data
+    command: redis-server --maxmemory 512mb --maxmemory-policy allkeys-lru --timeout 0 --tcp-keepalive 60
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   back:
     build:
       context: back
@@ -38,12 +47,18 @@ services:
       - ray
     ports:
       - 8265:8265
-      - 8000:8000
+      - 8002:8000
     networks:
       - default
       - chatfaq_db_net
       - chatfaq_back_net
       - chatfaq_state_machine_net
+      - cawl_chatbot_shared_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://back:8000/back/admin/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5      
     # volumes:
     #   - ./back/back:/back
   ray:
@@ -53,7 +68,7 @@ services:
       args:
         - INSTALL_CHAT_RAG=true
     container_name: chatfaq_ray
-    command: ["/.venv/bin/ray", "start", "--address=back:6375", "--resources={\"tasks\": 100, \"ai_components\": 100}", "--block"]
+    command: ["poetry", "run", "ray", "start", "--address=back:6375", "--resources={\"tasks\": 100, \"ai_components\": 100}", "--block"]
     networks:
       - default
       - chatfaq_db_net
@@ -89,7 +104,8 @@ services:
     container_name: chatfaq_fsm
     hostname: fsm
     depends_on:
-      - back
+      back:
+        condition: service_healthy
     networks:
       - chatfaq_state_machine_net
     volumes:
@@ -118,7 +134,7 @@ services:
     depends_on:
       - back
     ports:
-      - 3000:3000
+      - 3001:3000
     networks:
       - default
 
@@ -129,3 +145,6 @@ networks:
   chatfaq_db_net:
   chatfaq_back_net:
   chatfaq_state_machine_net:
+
+  cawl_chatbot_shared_net:
+    external: true

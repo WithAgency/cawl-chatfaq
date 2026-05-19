@@ -4,6 +4,7 @@
                 :subtitle="subtitle" enable-logout :allow-attachments="true"
                 :hideSources="hideSources" :stateOverride="stateOverride" :widgetConfigId="widgetId"
                 splitScreenIframe="http://localhost:3001/right-panel"
+                :enable-conversation-feedback="true"
         />
     </client-only>
 </template>
@@ -15,8 +16,7 @@ const conf = useRuntimeConfig()
 const chatfaqWS = ref(conf.public.chatfaqWS)
 const chatfaqAPI = ref(conf.public.chatfaqAPI)
 const title = ref("Hello there 👋")
-const subtitle = ref("How can we help you?")
-const fsmDef = ref("cawl_fsm")
+const fsmDef = ref("llm_fsm")
 const hideSources = ref(false)
 const stateOverride = ref(null)
 const widgetId = ref("6a5fb833-cdcf-468a-ac22-8f1c2b7b1672")

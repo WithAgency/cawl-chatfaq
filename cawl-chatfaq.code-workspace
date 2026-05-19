@@ -1,0 +1,26 @@
+{
+	"folders": [
+		{
+			"path": "admin"
+		},
+		{
+			"path": "back"
+		},
+		{
+			"path": "chat_rag"
+		},
+		{
+			"path": "doc"
+		},
+		{
+			"path": "sdk"
+		},
+		{
+			"path": "widget"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}

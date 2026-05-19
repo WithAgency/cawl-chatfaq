@@ -8,12 +8,17 @@
             <div class="title"> {{ store.title }}</div>
             <div class="subtitle"> {{ store.subtitle }}</div>
         </div>
-        <div class="maximizer" v-if="!store.fullScreen && !store.noMaximize" @click="store.maximized = !store.maximized; store.scrollToBottom += 1">
-            <Minimize class="max-icon" v-if="store.maximized"/>
-            <Maximize class="min-icon" v-else/>
-        </div>
-        <div class="minimizer" v-if="!store.fullScreen" @click="store.opened = false">
-            <ArrowDown class="min-icon"/>
+        <div class="right-group">
+            <div class="feedback-btn" v-if="store.enableConversationFeedback">
+               <FeedbackForm />
+            </div>
+            <div class="maximizer" v-if="!store.fullScreen && !store.noMaximize" @click="store.maximized = !store.maximized; store.scrollToBottom += 1">
+                <Minimize class="max-icon" v-if="store.maximized"/>
+                <Maximize class="min-icon" v-else/>
+            </div>
+            <div class="minimizer" v-if="!store.fullScreen" @click="store.opened = false">
+                <ArrowDown class="min-icon"/>
+            </div>
         </div>
     </div>
 </template>
@@ -25,6 +30,7 @@ import Minimize from "~/components/icons/Minimize.vue";
 import ArrowDown from "~/components/icons/ArrowDown.vue";
 import BurgerMenu from "~/components/icons/BurgerMenu.vue";
 import DoubleArrowRight from "~/components/icons/DoubleArrowRight.vue";
+import FeedbackForm from "~/components/chat/FeedbackForm.vue";
 
 const store = useGlobalStore();
 </script>
@@ -52,47 +58,10 @@ $phone-breakpoint: 600px;
         margin-top: 30px;
         margin-bottom: 30px;
 
-        &.maximizer, &.minimizer {
-            cursor: pointer;
+        &.right-group {
             margin-left: auto;
-            margin-right: 24px;
             display: flex;
-            width: 40px;
-            border-radius: 32px;
-            border: 1px solid $chatfaq-color-menu-border;
-
-            &:hover {
-                background: $chatfaq-color-menuItem-background-hover;
-            }
-
-            i {
-                width: 24px;
-                margin: auto;
-            }
-        }
-        &.maximizer {
-            border: 1px solid $chatfaq-color-menu-border;
-            .max-icon {
-                margin: auto;
-                color: $chatfaq-maximize-icon-color;
-            }
-            .min-icon {
-                margin: auto;
-                color: $chatfaq-minimize-icon-color;
-            }
-            @media only screen and (max-width: $phone-breakpoint) {
-                display: none;
-            }
-        }
-        &.minimizer {
-            display: none;
-            @media only screen and (max-width: $phone-breakpoint) {
-                display: flex;
-            }
-            .min-icon {
-                margin: auto;
-                color: $chatfaq-arrow-down-icon-color;
-            }
+            align-items: center;
         }
 
         &.menu-button {
@@ -121,6 +90,9 @@ $phone-breakpoint: 600px;
         }
 
         &.header-text {
+            display: flex;
+            align-items: center;
+
             &.no-menu {
                 margin-left: 24px;
             }
@@ -132,6 +104,52 @@ $phone-breakpoint: 600px;
             .subtitle {
                 font: $chatfaq-font-body-s;
             }
+        }
+    }
+
+    .feedback-btn {
+        margin-right: 8px;
+    }
+
+    .maximizer, .minimizer {
+        cursor: pointer;
+        margin-right: 24px;
+        display: flex;
+        width: 40px;
+        border-radius: 32px;
+        border: 1px solid $chatfaq-color-menu-border;
+
+        &:hover {
+            background: $chatfaq-color-menuItem-background-hover;
+        }
+
+        i {
+            width: 24px;
+            margin: auto;
+        }
+    }
+    .maximizer {
+        border: 1px solid $chatfaq-color-menu-border;
+        .max-icon {
+            margin: auto;
+            color: $chatfaq-maximize-icon-color;
+        }
+        .min-icon {
+            margin: auto;
+            color: $chatfaq-minimize-icon-color;
+        }
+        @media only screen and (max-width: $phone-breakpoint) {
+            display: none;
+        }
+    }
+    .minimizer {
+        display: none;
+        @media only screen and (max-width: $phone-breakpoint) {
+            display: flex;
+        }
+        .min-icon {
+            margin: auto;
+            color: $chatfaq-arrow-down-icon-color;
         }
     }
 }

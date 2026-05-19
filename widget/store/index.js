@@ -18,6 +18,7 @@ export const useGlobalStore = defineStore('globalStore', {
             hideSources: false,
             showToolMessages: false,
             noHeader: false,
+            enableConversationFeedback: false,
             previewMode: false,
             opened: false,
             noMenu: false,
@@ -69,6 +70,7 @@ export const useGlobalStore = defineStore('globalStore', {
             speechSynthesisEnabled: false,
             speechSynthesisPitch: 1,
             speechSynthesisRate: 1,
+            conversationFeedbackSent: false,
             speechSynthesisVoices: "",
             speechVoicesInitialized: false,
         }
@@ -97,6 +99,7 @@ export const useGlobalStore = defineStore('globalStore', {
             this.conversations.find((conversation) => conversation.id === id).name = name;
         },
         async openConversation(_selectedPlConversationId) {
+            this.conversationFeedbackSent = false;
             const headers = { 'Content-Type': 'application/json' }
             if (this.authToken)
                 headers.Authorization = `Token ${this.authToken}`;
@@ -114,6 +117,7 @@ export const useGlobalStore = defineStore('globalStore', {
         },
         createNewConversation(selectedPlConversationId) {
             this.messages = [];
+            this.conversationFeedbackSent = false;
             if (!selectedPlConversationId)
                 selectedPlConversationId = Math.floor(Math.random() * 1000000000);
             this.selectedPlConversationId = selectedPlConversationId;

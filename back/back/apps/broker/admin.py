@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .models.message import Message, UserFeedback, AdminReview, Conversation
-from .models import ConsumerRoundRobinQueue, RemoteSDKParsers
+from .models import ConsumerRoundRobinQueue, RemoteSDKParsers, ConversationFeedback
 import time
 
 
@@ -24,6 +24,17 @@ class MessageAdmin(admin.ModelAdmin):
 class UserFeedbackAdmin(admin.ModelAdmin):
     list_display = ["id", "message_source", "message_target", "feedback_data"]
 
+class ConversationFeedbackAdmin(admin.ModelAdmin):
+    list_display = ["id", "conversation", "tags", "comment"]
+    readonly_fields = ["id", "conversation", "tags", "comment"]
+
+    def has_change_permission(self, request, obj=None):
+        """Disables the ability to edit existing records."""
+        return False
+
+    def has_add_permission(self, request):
+        """Prevent manual creation in Admin."""
+        return False
 
 class AdminReviewAdmin(admin.ModelAdmin):
     list_display = ["id", "message_id", "gen_review_val", "gen_review_type", "ki_review_data"]
@@ -35,3 +46,4 @@ admin.site.register(AdminReview, AdminReviewAdmin)
 admin.site.register(Conversation)
 admin.site.register(ConsumerRoundRobinQueue)
 admin.site.register(RemoteSDKParsers)
+admin.site.register(ConversationFeedback, ConversationFeedbackAdmin)

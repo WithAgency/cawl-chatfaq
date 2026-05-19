@@ -353,6 +353,7 @@ class ConversationFeedbackView(CreateAPIView):
             span = Laminar.start_span(
                 input=feedback.comment if feedback.comment else None,
                 name="internal_tester_feedback",
+                tags=feedback.tags if feedback.tags else None,
             )
 
             with Laminar.use_span(span):

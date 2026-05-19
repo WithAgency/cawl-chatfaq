@@ -42,7 +42,7 @@
     "tag_insufficient_conversation_quality": "Insufficient conversational quality",
     "tag_insufficient_conversation_quality_hover": "Inappropriate tone, response too long, lack of empathy",
     "tag_rag_error": "RAG error / incorrect documentary content",
-    "tag_rag_error_hover": "Wrong document, wrong section, hallucination, CMS mix, invented procedure",
+    "tag_rag_error_hover": "Wrong document, wrong section, hallucination, made-up procedure",
     "tag_conversion_incorrect": "Incorrect conversion / qualification",
     "tag_conversion_incorrect_hover": "Recall proposed too early/late, wrong qualification question, support/sales confusion",
     "tag_technical_robustness": "Technical robustness issue",

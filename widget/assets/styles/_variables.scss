@@ -172,7 +172,6 @@
     --chatfaq-color-menuItem-background: var(--chatfaq-color-transparent-purple-10);
     --chatfaq-color-menuItem-border-edit: var(--chatfaq-color-tertiary-blue-500);
     --chatfaq-box-shadows-color: var(--chatfaq-color-full-transparent);
-    --chatfaq-font-feedbackToggle: var(--chatfaq-font-button);
     --chatfaq-color-feedbackToggle-background: var(--chatfaq-color-chatMessageHuman-background-light);
     --chatfaq-color-feedbackToggle-text: var(--chatfaq-color-chatMessageHuman-text-light);
     --chatfaq-color-feedbackPanel-background: var(--chatfaq-color-neutral-white);
@@ -221,6 +220,8 @@
     --chatfaq-color-feedbackTooltip-background: #deeefc;
     --chatfaq-color-feedbackTooltip-border: #508379;
     --chatfaq-color-feedbackTooltip-text: #38544c;
+    --chatfaq-font-feedbackToggle: var(--chatfaq-font-button);
+    --chatfaq-font-feedbackSendButton: var(--chatfaq-font-button);
     --chatfaq-font-feedbackTooltip: normal normal 400 14px/20px 'Open Sans';
     --chatfaq-font-feedbackPanel-title-text: var(--chatfaq-font-body-m-bold);
 
@@ -375,8 +376,6 @@ $chatfaq-prompt-button-background-color-dark: var(--chatfaq-prompt-button-backgr
 $chatfaq-bubble-button-open-icon-color: var(--chatfaq-bubble-button-open-icon-color);
 $chatfaq-bubble-button-close-icon-color: var(--chatfaq-bubble-button-close-icon-color);
 
-$chatfaq-font-feedbackToggle: var(--chatfaq-font-feedbackToggle);
-
 $chatfaq-color-feedbackToggle-background: var(--chatfaq-color-feedbackToggle-background);
 $chatfaq-color-feedbackToggle-text: var(--chatfaq-color-feedbackToggle-text);
 $chatfaq-color-feedbackPanel-background: var(--chatfaq-color-feedbackPanel-background);
@@ -425,6 +424,9 @@ $chatfaq-color-feedbackBackdrop: var(--chatfaq-color-feedbackBackdrop);
 $chatfaq-color-feedbackTooltip-background: var(--chatfaq-color-feedbackTooltip-background);
 $chatfaq-color-feedbackTooltip-border: var(--chatfaq-color-feedbackTooltip-border);
 $chatfaq-color-feedbackTooltip-text: var(--chatfaq-color-feedbackTooltip-text);
+
+$chatfaq-font-feedbackToggle: var(--chatfaq-font-feedbackToggle);
+$chatfaq-font-feedbackSendButton: var(--chatfaq-font-feedbackSendButton);
 $chatfaq-font-feedbackTooltip: var(--chatfaq-font-feedbackTooltip);
 $chatfaq-font-feedbackPanel-title-text: var(--chatfaq-font-feedbackPanel-title-text);
 

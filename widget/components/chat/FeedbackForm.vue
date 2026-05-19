@@ -448,7 +448,7 @@ async function submitFeedback() {
         cursor: pointer;
         background: $chatfaq-color-feedbackSendButton-background;
         color: $chatfaq-color-feedbackSendButton-text;
-        font: $chatfaq-font-button;
+        font: $chatfaq-font-feedbackSendButton;
         font-size: 14px;
         padding: 10px 24px;
         border: none;

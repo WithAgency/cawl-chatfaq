@@ -40,7 +40,7 @@
     "tag_safeguard_not_respected": "Salvaguarda no respetada",
     "tag_safeguard_not_respected_hover": "Competencia, datos sensibles, fuera de alcance, asesoramiento legal/fiscal, solicitud imposible no rechazada",
     "tag_insufficient_conversation_quality": "Calidad conversacional insuficiente",
-    "tag_insufficient_conversation_quality_hover": "Tono inadecuado, respuesta demasiado larga, falta de empatía, ausencia de reformulación",
+    "tag_insufficient_conversation_quality_hover": "Tono inadecuado, respuesta demasiado larga, falta de empatía",
     "tag_rag_error": "Error RAG / contenido documental incorrecto",
     "tag_rag_error_hover": "Documento incorrecto, sección incorrecta, alucinación, mezcla CMS, procedimiento inventado",
     "tag_conversion_incorrect": "Conversión / calificación incorrecta",

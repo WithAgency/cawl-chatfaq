@@ -47,8 +47,6 @@
     "tag_conversion_incorrect_hover": "Rappel proposé trop tôt/trop tard, mauvaise question de qualification, confusion support/commercial",
     "tag_technical_robustness": "Problème de robustesse technique",
     "tag_technical_robustness_hover": "Latence excessive, erreur non gérée, message technique brut, freeze, réponse incohérente",
-    "tag_ai_non_conformity": "Non-conformité IA / sécurité",
-    "tag_ai_non_conformity_hover": "Donnée sensible acceptée, jailbreak réussi, non-stockage non respecté",
     "tag_multi_turn_inconsistency": "Incohérence multi-tours",
     "tag_multi_turn_inconsistency_hover": "Contradiction, perte de contexte, réponse hors fil, mauvaise gestion d'un retour en arrière"
 }

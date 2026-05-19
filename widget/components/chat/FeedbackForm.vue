@@ -114,7 +114,6 @@ const tags = [
     { key: "rag_error", label: "tag_rag_error", hover: "tag_rag_error_hover" },
     { key: "conversion_incorrect", label: "tag_conversion_incorrect", hover: "tag_conversion_incorrect_hover" },
     { key: "technical_robustness", label: "tag_technical_robustness", hover: "tag_technical_robustness_hover" },
-    { key: "ai_non_conformity", label: "tag_ai_non_conformity", hover: "tag_ai_non_conformity_hover" },
     { key: "multi_turn_inconsistency", label: "tag_multi_turn_inconsistency", hover: "tag_multi_turn_inconsistency_hover" },
 ];
 

@@ -47,8 +47,6 @@
     "tag_conversion_incorrect_hover": "Recordatorio propuesto demasiado temprano/tarde, mala pregunta de calificación, confusión soporte/comercial",
     "tag_technical_robustness": "Problema de robustez técnica",
     "tag_technical_robustness_hover": "Latencia excesiva, error no manejado, mensaje técnico bruto, congelación, respuesta incoherente",
-    "tag_ai_non_conformity": "No conformidad IA / seguridad",
-    "tag_ai_non_conformity_hover": "Dato sensible aceptado, jailbreak exitoso, incumplimiento de no almacenamiento",
     "tag_multi_turn_inconsistency": "Inconsistencia multi-turno",
     "tag_multi_turn_inconsistency_hover": "Contradicción, pérdida de contexto, respuesta fuera de hilo, mala gestión de retroceso"
 }

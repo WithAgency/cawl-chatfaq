@@ -279,6 +279,7 @@ async function submitFeedback() {
     }
 
     .tag-chip {
+        width: 100%;
         display: flex;
         align-items: center;
         gap: 10px;
@@ -347,7 +348,6 @@ async function submitFeedback() {
     .tag-label {
         font: $chatfaq-font-body-s;
         color: $chatfaq-color-feedbackTagLabel-text;
-        white-space: nowrap;
 
         .dark-mode & {
             color: $chatfaq-color-feedbackTagLabel-text-dark;
@@ -361,6 +361,7 @@ async function submitFeedback() {
         flex-shrink: 0;
         cursor: help;
         position: relative;
+        margin-left: auto;
 
         .dark-mode & {
             color: $chatfaq-color-feedbackInfoIcon-color-dark;

@@ -90,6 +90,9 @@ $phone-breakpoint: 600px;
         }
 
         &.header-text {
+            display: flex;
+            align-items: center;
+
             &.no-menu {
                 margin-left: 24px;
             }

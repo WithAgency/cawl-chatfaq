@@ -50,10 +50,10 @@
                         class="comment-input"
                         :class="{ 'dark-mode': store.darkMode }"
                         :placeholder="$t('conversation_feedback_comment_placeholder')"
-                        maxlength="300"
+                        :maxlength="MAX_COMMENT_LENGTH"
                         rows="3"
                     ></textarea>
-                    <span class="char-count">{{ comment.length }}/300</span>
+                    <span class="char-count">{{ comment.length }}/{{ MAX_COMMENT_LENGTH }}</span>
                 </div>
                 <button
                     class="send-btn"
@@ -83,6 +83,10 @@ const comment = ref("");
 const activeTooltip = ref(null);
 const tooltipRef = ref(null);
 const tooltipStyle = ref({});
+
+/** Maximum number of characters allowed in the comment */
+const MAX_COMMENT_LENGTH = 1000;
+
 
 watch(activeTooltip, async () => {
     tooltipStyle.value = {};

@@ -92,13 +92,13 @@ watch(activeTooltip, async () => {
         if (el) {
             const rect = el.getBoundingClientRect();
             const shift = { x: 0 };
-            const margin = 24;
+            const margin = 0;
             if (rect.right > window.innerWidth - margin)
                 shift.x = window.innerWidth - margin - rect.right;
             if (rect.left < margin)
                 shift.x = margin - rect.left;
             if (shift.x)
-                tooltipStyle.value = { transform: `translateX(calc(-50% + ${shift.x}px))` };
+                tooltipStyle.value = { right: `${shift.x}px` };
         }
     }
 });
@@ -371,8 +371,7 @@ async function submitFeedback() {
     .tooltip-popup {
         position: absolute;
         bottom: calc(100% + 8px);
-        left: 50%;
-        transform: translateX(-50%);
+        right: 0;
         background: $chatfaq-color-feedbackTooltip-background;
         border: 1px solid $chatfaq-color-feedbackTooltip-border;
         border-radius: 8px;
@@ -386,16 +385,17 @@ async function submitFeedback() {
     }
 
     .tooltip-arrow {
+        $size: 8.5px;
         position: absolute;
         top: 100%;
-        left: 50%;
-        transform: translateX(-50%) rotate(45deg);
-        width: 8.5px;
-        height: 8.5px;
+        right: 12px;
+        transform: rotate(45deg);
+        width: $size;
+        height: $size;
         background: $chatfaq-color-feedbackTooltip-background;
         border-right: 1px solid $chatfaq-color-feedbackTooltip-border;
         border-bottom: 1px solid $chatfaq-color-feedbackTooltip-border;
-        margin-top: -4.25px;
+        margin-top: -($size / 2) + 1px;
     }
 
     .comment-wrapper {

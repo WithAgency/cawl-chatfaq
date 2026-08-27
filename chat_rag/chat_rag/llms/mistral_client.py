@@ -45,47 +45,16 @@ class MistralChatModel(LLM):
         if tool_choice is None:
             tool_choice = "none"
 
-        # format_tools returns (tools_formatted, tool_choice)
-        tools_formatted, tool_choice = format_tools(
+        tools_formatted = format_tools(
             tools=tools, tool_choice=tool_choice, mode=Mode.MISTRAL_TOOLS
         )
 
-        # Normalize tool dicts so we always have a flat shape with a 'name' key.
-        normalized_tools: List[Dict] = []
-        for t in tools_formatted or []:
-            if not isinstance(t, dict):
-                # leave non-dict entries as-is (defensive)
-                normalized_tools.append(t)
-                continue
-
-            # If already flattened (expected shape: {"name": ...}), keep it
-            if "name" in t:
-                normalized_tools.append(t)
-                continue
-
-            # Handle OpenAI "function" style: {"type":"function","function":{...}}
-            fn = t.get("function") if isinstance(t.get("function"), dict) else None
-            if fn:
-                normalized_tools.append(
-                    {
-                        "name": fn.get("name"),
-                        "description": fn.get("description"),
-                        "parameters": fn.get("parameters"),
-                    }
-                )
-                continue
-
-            # Fallback: keep original
-            normalized_tools.append(t)
-
-        tools_formatted = normalized_tools
-
-        tool_names = [tool.get("name") for tool in tools_formatted]
+        tool_names = [tool["name"] for tool in tools_formatted]
         valid_choices = [*tool_names, "auto", "none"]
 
         if tool_choice not in valid_choices:
             raise ValueError(
-                f"tool_choice must be 'none', 'auto', or one of the tool names: {', '.join([str(n) for n in tool_names])}"
+                f"tool_choice must be 'none', 'auto', or one of the tool names: {', '.join(tool_names)}"
             )
 
         return tools_formatted, tool_choice

@@ -113,6 +113,7 @@ def uppercase_types_recursively(schema: Dict[str, Any]) -> Dict[str, Any]:
             schema[i] = uppercase_types_recursively(item)
     return schema
 
+
 def transform_tool_spec(data, keys_to_remove):
     """
     Recursively removes 'additionalProperties', 'default', and '$schema' keys
@@ -171,8 +172,20 @@ def format_tools(
     if mode in {Mode.OPENAI_TOOLS, Mode.MISTRAL_TOOLS}:
         for tool in tools:
             tool = transform_tool_spec(tool, keys_to_remove=["default"])
-            # As it is already in the openai format, we can just append it
-            tools_formatted.append(tool)
+            # For Mistral we need a flattened representation (name, description, parameters)
+            if mode == Mode.MISTRAL_TOOLS:
+                fn = tool.get("function", {})
+                name = fn.get("name")
+                description = fn.get("description", "")
+                parameters = fn.get("parameters", {})
+                tools_formatted.append({
+                    "name": name,
+                    "description": description,
+                    "parameters": parameters,
+                })
+            else:
+                # As it is already in the openai format, we can just append it
+                tools_formatted.append(tool)
 
     elif mode == Mode.ANTHROPIC_TOOLS:
         for tool in tools:

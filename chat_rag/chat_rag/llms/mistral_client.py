@@ -1,5 +1,6 @@
 import json
 import os
+import ast
 from typing import Callable, Dict, List, Union
 
 from chat_rag.llms.types import Content, Message, ToolUse, Usage
@@ -61,15 +62,27 @@ class MistralChatModel(LLM):
 
     def _extract_tool_info(self, message) -> List[Dict]:
         """
-        Format the tool information from the anthropic response to a standard format.
+        Format the tool information from the mistral response to a standard format.
         """
         tools = []
         for tool in getattr(message, "tool_calls", []):
+            # tool.function.arguments may be a JSON string or already a dict
+            args_raw = getattr(tool.function, "arguments", None)
+            args = args_raw
+            if isinstance(args_raw, str):
+                try:
+                    args = json.loads(args_raw)
+                except Exception:
+                    try:
+                        args = ast.literal_eval(args_raw)
+                    except Exception:
+                        args = args_raw
+
             tools.append(
                 {
-                    "id": tool.id,
-                    "name": tool.function.name,
-                    "args": tool.function.arguments,
+                    "id": getattr(tool, "id", None),
+                    "name": getattr(tool.function, "name", None),
+                    "args": args,
                 }
             )
 
@@ -87,17 +100,30 @@ class MistralChatModel(LLM):
             content_list.append(Content(type="text", text=message.content))
 
         if hasattr(message, "tool_calls") and message.tool_calls:
-            content_list.extend(
-                Content(
-                    type="tool_use",
-                    tool_use=ToolUse(
-                        id=tool_call.id,
-                        name=tool_call.function.name,
-                        args=json.loads(tool_call.function.arguments),
-                    ),
+            def _parse_args(arg_value):
+                if isinstance(arg_value, str):
+                    try:
+                        return json.loads(arg_value)
+                    except Exception:
+                        try:
+                            return ast.literal_eval(arg_value)
+                        except Exception:
+                            return arg_value
+                return arg_value
+
+            for tool_call in message.tool_calls:
+                args_raw = getattr(tool_call.function, "arguments", None)
+                args = _parse_args(args_raw)
+                content_list.append(
+                    Content(
+                        type="tool_use",
+                        tool_use=ToolUse(
+                            id=getattr(tool_call, "id", None),
+                            name=getattr(tool_call.function, "name", None),
+                            args=args,
+                        ),
+                    )
                 )
-                for tool_call in message.tool_calls
-            )
 
         usage = None
         if usage_info:
@@ -119,161 +145,3 @@ class MistralChatModel(LLM):
         self,
         messages: List[Dict[str, str]],
         temperature: float = 1.0,
-        max_tokens: int = 1024,
-        seed: int | None = None,
-        **kwargs,
-    ):
-        """
-        Generate text from a prompt using the model in streaming mode.
-        Parameters
-        ----------
-        messages : List[Tuple[str, str]]
-            The messages to use for the prompt. Pair of (role, message).
-        Returns
-        -------
-        str
-            The generated text.
-        """
-
-        messages = self.format_prompt(
-            messages=messages,
-        )
-
-        for chunk in self.client.chat.stream(
-            model=self.llm_name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            random_seed=seed,
-        ):
-            content = chunk.data.choices[0].delta.content
-            if content is not None:
-                yield content
-
-    async def astream(
-        self,
-        messages: List[Dict[str, str]],
-        temperature: float = 1.0,
-        max_tokens: int = 1024,
-        seed: int | None = None,
-        **kwargs,
-    ):
-        """
-        Generate text from a prompt using the model in streaming mode.
-        Parameters
-        ----------
-        messages : List[Tuple[str, str]]
-            The messages to use for the prompt. Pair of (role, message).
-        Returns
-        -------
-        str
-            The generated text.
-        """
-
-        messages = self.format_prompt(
-            messages=messages,
-        )
-
-        # **await the coroutine first**, then async for
-        stream_iter = await self.client.chat.stream_async(
-            model=self.llm_name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            random_seed=seed,
-        )
-
-        async for chunk in stream_iter:
-            content = chunk.data.choices[0].delta.content
-            if content is not None:
-                yield content
-
-    def generate(
-        self,
-        messages: List[Dict[str, str]],
-        temperature: float = 1.0,
-        max_tokens: int = 1024,
-        seed: int = None,
-        tools: List[Union[Callable, Dict]] = None,
-        tool_choice: str = None,
-        **kwargs,
-    ):
-        """
-        Generate text from a prompt using a model.
-        Parameters
-        ----------
-        messages : List[Tuple[str, str]]
-            The messages to use for the prompt. Pair of (role, message).
-        Returns
-        -------
-        str
-            The generated text.
-        """
-
-        messages = self.format_prompt(
-            messages=messages,
-        )
-
-        if tools:
-            tools, tool_choice = self._format_tools(tools, tool_choice)
-
-        chat_response = self.client.chat.complete(
-            model=self.llm_name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            random_seed=seed,
-            tools=tools,
-            tool_choice=tool_choice,
-        )
-
-        message = chat_response.choices[0].message
-        if getattr(chat_response.choices[0], "finish_reason", None) == "tool_calls":
-            return self._extract_tool_info(message)
-
-        return self._map_mistral_message(message, usage_info=chat_response.usage)
-
-    async def agenerate(
-        self,
-        messages: List[Dict[str, str]],
-        temperature: float = 1.0,
-        max_tokens: int = 1024,
-        seed: int | None = None,
-        tools: List[Union[Callable, Dict]] | None = None,
-        tool_choice: str | None = None,
-        **kwargs,
-    ):
-        """
-        Generate text from a prompt using a model.
-        Parameters
-        ----------
-        messages : List[Tuple[str, str]]
-            The messages to use for the prompt. Pair of (role, message).
-        Returns
-        -------
-        str
-            The generated text.
-        """
-
-        messages = self.format_prompt(
-            messages=messages,
-        )
-
-        if tools:
-            tools, tool_choice = self._format_tools(tools, tool_choice)
-
-        chat_response = await self.client.chat.complete_async(
-            model=self.llm_name,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            random_seed=seed,
-            tools=tools,
-            tool_choice=tool_choice,
-        )
-
-        message = chat_response.choices[0].message
-        if chat_response.choices[0].finish_reason == "tool_calls":
-            return self._extract_tool_info(message)
-
-        return self._map_mistral_message(message, usage_info=chat_response.usage)

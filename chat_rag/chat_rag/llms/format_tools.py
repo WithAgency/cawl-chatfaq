@@ -172,16 +172,19 @@ def format_tools(
     if mode in {Mode.OPENAI_TOOLS, Mode.MISTRAL_TOOLS}:
         for tool in tools:
             tool = transform_tool_spec(tool, keys_to_remove=["default"])
-            # For Mistral we need a flattened representation (name, description, parameters)
+            # For Mistral we need a representation compatible with the mistralai SDK
             if mode == Mode.MISTRAL_TOOLS:
                 fn = tool.get("function", {})
                 name = fn.get("name")
                 description = fn.get("description", "")
                 parameters = fn.get("parameters", {})
+                # mistralai models expect a 'function' object with an 'arguments' schema
                 tools_formatted.append({
-                    "name": name,
-                    "description": description,
-                    "parameters": parameters,
+                    "function": {
+                        "name": name,
+                        "description": description,
+                        "arguments": parameters,
+                    }
                 })
             else:
                 # As it is already in the openai format, we can just append it

@@ -68,7 +68,7 @@ class OpenAIChatModel(LLM):
                             "id": content.tool_use.id,
                             "function": {
                                 "name": content.tool_use.name,
-                                "arguments": str(content.tool_use.args),
+                                "arguments": json.dumps(content.tool_use.args),
                             },
                         }
                         tool_calls.append(part)

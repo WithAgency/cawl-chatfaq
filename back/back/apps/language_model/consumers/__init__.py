@@ -35,6 +35,42 @@ from back.apps.health.models import Event
 logger = getLogger(__name__)
 
 
+def convert_message_to_openai_format(message: Message) -> dict:
+    """
+    Convert a Message with Anthropic-style Content blocks to OpenAI format.
+
+    Returns a dict with:
+    - content: text content (string or None)
+    - tool_calls: list of tool calls in OpenAI format (if any)
+    """
+    import json
+
+    text_parts = []
+    tool_calls = []
+
+    if isinstance(message.content, str):
+        return {"content": message.content, "tool_calls": None}
+
+    if isinstance(message.content, list):
+        for content_block in message.content:
+            if content_block.type == "text" and content_block.text:
+                text_parts.append(content_block.text)
+            elif content_block.type == "tool_use" and content_block.tool_use:
+                tool_calls.append({
+                    "id": content_block.tool_use.id,
+                    "type": "function",
+                    "function": {
+                        "name": content_block.tool_use.name,
+                        "arguments": json.dumps(content_block.tool_use.args) if content_block.tool_use.args else "{}"
+                    }
+                })
+
+    return {
+        "content": " ".join(text_parts) if text_parts else None,
+        "tool_calls": tool_calls if tool_calls else None
+    }
+
+
 def format_msgs_chain_to_llm_context(msgs_chain) -> List[Message]:
     """
     Returns a list of chat_rag Message objects representing the conversation context.
@@ -67,7 +103,20 @@ def format_msgs_chain_to_llm_context(msgs_chain) -> List[Message]:
 
         # Create a text content if available.
         if type == "message" or type == "message_chunk":
-            contents.append(Content(text=payload.get("content"), type="text"))
+            text_content = payload.get("content")
+            if text_content:
+                contents.append(Content(text=text_content, type="text"))
+
+            # Extract tool_calls from message payload (FSM saves them here)
+            tool_calls = payload.get("tool_calls", [])
+            for tool_call in tool_calls:
+                # tool_call format: {"id": "...", "type": "function", "function": {"name": "...", "arguments": "..."}}
+                tool_use_obj = ToolUse(
+                    id=tool_call.get("id"),
+                    name=tool_call["function"]["name"],
+                    args=json.loads(tool_call["function"]["arguments"]) if isinstance(tool_call["function"]["arguments"], str) else tool_call["function"]["arguments"]
+                )
+                contents.append(Content(tool_use=tool_use_obj, type="tool_use"))
 
         # Check if this stack represents a tool call (tool use).
         if type == "tool_use":
@@ -174,7 +223,6 @@ async def resolve_references(reference_kis, retriever_config):
             "similarity": ki["similarity"],
         }
 
-    logger.info(f"References:\n{reference_kis}")
     # All images of the conversation so far
     reference_ki_images = {}
     for reference_ki in reference_kis:
@@ -256,6 +304,13 @@ async def query_llm(
             name=llm_config_name
         )
         is_mistral = llm_config.llm_type == LLMChoices.MISTRAL.value
+        logger.debug(
+            "LLM request: provider=%s model=%s streaming=%s tools_enabled=%s",
+            llm_config.llm_type,
+            llm_config.llm_name,
+            stream,
+            bool(tools),
+        )
         if is_mistral and tools and stream:
             await error_handler({
                 "payload": {
@@ -307,7 +362,6 @@ async def query_llm(
             },
             )
             return
-
 
     # Generate a unique ID for this LLM call
     llm_call_id = str(uuid.uuid4())
@@ -410,8 +464,11 @@ async def query_llm(
                 tool_choice=tool_choice,
                 **extra_args
             )
+            # Convert to OpenAI format for client compatibility
+            openai_format = convert_message_to_openai_format(response_message)
             yield {
-                "content": [content.model_dump() for content in response_message.content], # Make it serializable
+                "content": openai_format["content"],
+                "tool_calls": openai_format["tool_calls"],
                 "usage": response_message.usage.model_dump() if response_message.usage else None,
                 "stop_reason": response_message.stop_reason,
                 "last_chunk": True,
@@ -493,10 +550,17 @@ class AIConsumer(CustomAsyncConsumer, AsyncJsonWebsocketConsumer):
             await self.close()
             return
         await self.accept()
-        print(f"Starting new LLM WS connection (channel group: {self.channel_name})")
+        logger.debug(
+            "LLM WebSocket connected: channel_group=%s",
+            self.channel_name,
+        )
 
     async def disconnect(self, close_code):
-        print(f"Disconnecting from LLM consumer {close_code}")
+        logger.debug(
+            "LLM WebSocket disconnected: channel_group=%s close_code=%s",
+            self.channel_name,
+            close_code,
+        )
 
     async def receive_json(self, content, **kwargs):
         serializer = RPCResponseSerializer(data=content)

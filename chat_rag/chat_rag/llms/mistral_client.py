@@ -24,10 +24,6 @@ class MistralChatModel(LLM):
         Convert standard chat messages to Mistral/OpenAI format.
         Mirrors the OpenAI client's _format_messages method.
         """
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error(f"INPUT: Received {len(messages)} messages to format")
-
         def format_content(message: Message):
             content_list = []
             tool_calls = []
@@ -60,20 +56,16 @@ class MistralChatModel(LLM):
 
             return " ".join(content_list) if content_list else None, tool_calls, tool_results
 
-        import logging
-        logger = logging.getLogger(__name__)
-
         messages_formatted = []
         skip_next_tool_results = False
 
-        for idx, message in enumerate(messages):
+        for message in messages:
             # Handle dict messages with tool_calls or tool results (from FSM orchestrator)
             if isinstance(message, Dict):
                 # Do not mutate the caller's message while normalizing it.
                 message = message.copy()
                 # Handle tool role messages: {"role": "tool", "tool_call_id": "...", "name": "...", "content": "..."}
                 if message.get("role") == "tool":
-                    logger.error(f"🔧 DICT MESSAGE: Found tool message at index {idx}, tool_call_id={message.get('tool_call_id')}")
                     # Convert tool dict to Message with ToolResult content
                     message = Message(
                         role="user",  # Tool results are treated as user messages in the content flow
@@ -87,7 +79,6 @@ class MistralChatModel(LLM):
                             )
                         ]
                     )
-                    logger.error(f"   ✅ Converted to ToolResult: id={message.content[0].tool_result.id}")
                 else:
                     # Handle cases where content might be None - convert to empty string
                     if message.get("content") is None:
@@ -101,7 +92,6 @@ class MistralChatModel(LLM):
 
                     # If dict had tool_calls, convert them to Content objects
                     if dict_tool_calls:
-                        logger.error(f"🔧 DICT MESSAGE: Found {len(dict_tool_calls)} tool_calls in dict message at index {idx}")
                         if isinstance(message.content, str):
                             # Convert string content to list
                             message.content = [Content(type="text", text=message.content)] if message.content else []
@@ -120,22 +110,16 @@ class MistralChatModel(LLM):
                                     )
                                 )
                             )
-                            logger.error(f"   ✅ Converted tool_call to Content: id={tc.get('id')}, name={tc['function']['name']}")
 
             content, tool_calls, tool_results = format_content(message)
 
-            logger.error(f"Processing message {idx}: role={message.role}, has_content={bool(content)}, has_tool_calls={len(tool_calls)}, has_tool_results={len(tool_results)}, skip_flag={skip_next_tool_results}")
-
             # If there are tool results
             if tool_results:
-                logger.error(f"Found tool_results, skip_flag={skip_next_tool_results}, num_results={len(tool_results)}")
                 # Skip tool results if the previous assistant message was skipped
                 if skip_next_tool_results:
-                    logger.error(f"SKIPPING tool results because flag is set")
                     skip_next_tool_results = False
                     # If there's also user text alongside tool results, add it as a user message
                     if content and message.role == "user":
-                        logger.error(f"Adding user text after skipped tools: {content[:50]}")
                         messages_formatted.append({
                             "role": "user",
                             "content": content
@@ -143,12 +127,10 @@ class MistralChatModel(LLM):
                     continue
 
                 # Add tool results only if we have a valid assistant message before them
-                logger.error(f"Adding {len(tool_results)} tool messages")
                 messages_formatted.extend(tool_results)
 
                 # If there's also user text alongside tool results, add it as a user message
                 if content and message.role == "user":
-                    logger.error(f"Adding user text: {content[:50]}")
                     messages_formatted.append({
                         "role": "user",
                         "content": content
@@ -173,18 +155,6 @@ class MistralChatModel(LLM):
                 messages_formatted.append(msg_dict)
                 skip_next_tool_results = False
 
-        import logging
-        logger = logging.getLogger(__name__)
-
-        # Helper to truncate content for cleaner logging
-        def truncate_message(msg):
-            msg_copy = msg.copy()
-            if isinstance(msg_copy.get("content"), str) and len(msg_copy["content"]) > 100:
-                msg_copy["content"] = msg_copy["content"][:100] + "..."
-            return msg_copy
-
-        logger.error(f"MISTRAL FORMATTED MESSAGES: {json.dumps([truncate_message(m) for m in messages_formatted], indent=2)}")
-
         # Final validation: remove tool messages that do not correspond to a pending
         # call from the immediately preceding assistant turn. A single assistant
         # turn may contain multiple calls, and Mistral requires one response for
@@ -192,7 +162,7 @@ class MistralChatModel(LLM):
         # incorrectly drops every result after the first one.
         validated_messages = []
         pending_tool_call_ids = set()
-        for i, msg in enumerate(messages_formatted):
+        for msg in messages_formatted:
             if msg.get("role") == "assistant":
                 tool_calls = msg.get("tool_calls") or []
                 pending_tool_call_ids = {
@@ -206,16 +176,11 @@ class MistralChatModel(LLM):
                 if tool_call_id in pending_tool_call_ids:
                     validated_messages.append(msg)
                     pending_tool_call_ids.remove(tool_call_id)
-                else:
-                    logger.error(f"DROPPING orphaned tool message at index {i}: {tool_call_id or 'unknown'}")
             else:
                 # A new user/system message starts a new turn. Any calls left
                 # unresolved by that point cannot be paired safely.
                 pending_tool_call_ids.clear()
                 validated_messages.append(msg)
-
-        if len(validated_messages) != len(messages_formatted):
-            logger.error(f"VALIDATED MESSAGES (removed {len(messages_formatted) - len(validated_messages)} orphaned tools): {json.dumps([truncate_message(m) for m in validated_messages], indent=2)}")
 
         # CRITICAL: Detect infinite loop caused by malformed conversation history
         # If we keep dropping tool messages and ending up with just [system, user],
@@ -226,14 +191,6 @@ class MistralChatModel(LLM):
             dropped_tool_count = len(messages_formatted) - len(validated_messages)
 
             if dropped_assistant_count > 0 or dropped_tool_count > 0:
-                logger.error(f"🔴 INFINITE LOOP DETECTED:")
-                logger.error(f"   - Dropped {dropped_assistant_count} assistant messages without tool_calls")
-                logger.error(f"   - Dropped {dropped_tool_count} orphaned tool messages")
-                logger.error(f"   - This indicates tool_calls are being lost during conversation history serialization")
-                logger.error(f"   - Returning ONLY [system, user] to prevent infinite loop")
-                logger.error(f"   - WARNING: Conversation history is not being preserved!")
-                logger.error(f"   - ACTION REQUIRED: Fix upstream tool_calls serialization in consumers/__init__.py")
-
                 # Return just system and user - conversation history is broken anyway
                 return [validated_messages[0], validated_messages[1]]
 
@@ -488,10 +445,6 @@ class MistralChatModel(LLM):
         )
 
         message = chat_response.choices[0].message
-
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error(f"MISTRAL RESPONSE: role={message.role}, has_content={bool(message.content)}, has_tool_calls={bool(message.tool_calls)}, tool_call_count={len(message.tool_calls) if message.tool_calls else 0}")
 
         return self._map_mistral_message(message, usage_info=chat_response.usage)
 

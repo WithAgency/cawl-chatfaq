@@ -304,6 +304,13 @@ async def query_llm(
             name=llm_config_name
         )
         is_mistral = llm_config.llm_type == LLMChoices.MISTRAL.value
+        logger.debug(
+            "LLM request: provider=%s model=%s streaming=%s tools_enabled=%s",
+            llm_config.llm_type,
+            llm_config.llm_name,
+            stream,
+            bool(tools),
+        )
         if is_mistral and tools and stream:
             await error_handler({
                 "payload": {
@@ -543,9 +550,17 @@ class AIConsumer(CustomAsyncConsumer, AsyncJsonWebsocketConsumer):
             await self.close()
             return
         await self.accept()
+        logger.debug(
+            "LLM WebSocket connected: channel_group=%s",
+            self.channel_name,
+        )
 
     async def disconnect(self, close_code):
-        pass
+        logger.debug(
+            "LLM WebSocket disconnected: channel_group=%s close_code=%s",
+            self.channel_name,
+            close_code,
+        )
 
     async def receive_json(self, content, **kwargs):
         serializer = RPCResponseSerializer(data=content)

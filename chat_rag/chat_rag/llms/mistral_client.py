@@ -14,104 +14,140 @@ class MistralChatModel(LLM):
     def __init__(
         self,
         llm_name: str = "mistral-large-latest",
+        api_key: str = None,
         **kwargs,
     ):
-        self.client = Mistral(api_key=os.environ["MISTRAL_API_KEY"])
+        api_key = api_key or os.environ.get("MISTRAL_API_KEY")
+        if not api_key:
+            raise ValueError("MISTRAL_API_KEY is required")
+
+        self.client = Mistral(api_key=api_key)
+        self.aclient = Mistral(api_key=api_key)
         self.llm_name = llm_name
+
+    @staticmethod
+    def _format_content(message: Message) -> tuple[str | None, list[dict], list[dict]]:
+        content_list = []
+        tool_calls = []
+        tool_results = []
+
+        if isinstance(message.content, str):
+            return message.content, tool_calls, tool_results
+
+        for content in message.content:
+            if content.type == "text":
+                content_list.append(content.text)
+            elif content.type == "tool_use":
+                tool_calls.append(
+                    {
+                        "type": "function",
+                        "id": content.tool_use.id,
+                        "function": {
+                            "name": content.tool_use.name,
+                            "arguments": json.dumps(content.tool_use.args),
+                        },
+                    }
+                )
+            elif content.type == "tool_result":
+                result = content.tool_result.result
+                tool_results.append(
+                    {
+                        "tool_call_id": content.tool_result.id,
+                        "role": "tool",
+                        "content": json.dumps(result) if isinstance(result, dict) else str(result),
+                    }
+                )
+
+        return " ".join(content_list) if content_list else None, tool_calls, tool_results
+
+    @staticmethod
+    def _normalize_message(message: Union[Dict, Message]) -> Message:
+        if not isinstance(message, dict):
+            return message
+
+        message = message.copy()
+        if message.get("role") == "tool":
+            return Message(
+                role="user",
+                content=[
+                    Content(
+                        type="tool_result",
+                        tool_result=ToolResult(
+                            id=message.get("tool_call_id"),
+                            result=message.get("content"),
+                        ),
+                    )
+                ],
+            )
+
+        if message.get("content") is None:
+            message["content"] = ""
+
+        dict_tool_calls = message.pop("tool_calls", None)
+        normalized = Message(**message)
+
+        if dict_tool_calls:
+            if isinstance(normalized.content, str):
+                normalized.content = (
+                    [Content(type="text", text=normalized.content)]
+                    if normalized.content
+                    else []
+                )
+            elif not isinstance(normalized.content, list):
+                normalized.content = []
+
+            for tool_call in dict_tool_calls:
+                arguments = tool_call["function"]["arguments"]
+                if isinstance(arguments, str):
+                    arguments = json.loads(arguments)
+                normalized.content.append(
+                    Content(
+                        type="tool_use",
+                        tool_use=ToolUse(
+                            id=tool_call.get("id"),
+                            name=tool_call["function"]["name"],
+                            args=arguments,
+                        ),
+                    )
+                )
+
+        return normalized
+
+    @staticmethod
+    def _validate_tool_messages(messages: list[dict]) -> list[dict]:
+        validated_messages = []
+        pending_tool_call_ids = set()
+
+        for message in messages:
+            if message.get("role") == "assistant":
+                pending_tool_call_ids = {
+                    tool_call.get("id")
+                    for tool_call in message.get("tool_calls") or []
+                    if tool_call.get("id")
+                }
+                validated_messages.append(message)
+            elif message.get("role") == "tool":
+                tool_call_id = message.get("tool_call_id")
+                if tool_call_id in pending_tool_call_ids:
+                    validated_messages.append(message)
+                    pending_tool_call_ids.remove(tool_call_id)
+            else:
+                pending_tool_call_ids.clear()
+                validated_messages.append(message)
+
+        return validated_messages
 
     def _format_messages(self, messages: List[Union[Dict, Message]]) -> List[Dict]:
         """
         Convert standard chat messages to Mistral/OpenAI format.
         Mirrors the OpenAI client's _format_messages method.
         """
-        def format_content(message: Message):
-            content_list = []
-            tool_calls = []
-            tool_results = []
-
-            if isinstance(message.content, str):
-                return message.content, [], []
-            else:
-                for content in message.content:
-                    if content.type == "text":
-                        content_list.append(content.text)
-                    elif content.type == "tool_use":
-                        part = {
-                            "type": "function",
-                            "id": content.tool_use.id,
-                            "function": {
-                                "name": content.tool_use.name,
-                                "arguments": json.dumps(content.tool_use.args),
-                            },
-                        }
-                        tool_calls.append(part)
-                    elif content.type == "tool_result":
-                        tool_results.append(
-                            {
-                                "tool_call_id": content.tool_result.id,
-                                "role": "tool",
-                                "content": json.dumps(content.tool_result.result) if isinstance(content.tool_result.result, dict) else str(content.tool_result.result),
-                            }
-                        )
-
-            return " ".join(content_list) if content_list else None, tool_calls, tool_results
-
         messages_formatted = []
         skip_next_tool_results = False
 
         for message in messages:
-            # Handle dict messages with tool_calls or tool results (from FSM orchestrator)
-            if isinstance(message, Dict):
-                # Do not mutate the caller's message while normalizing it.
-                message = message.copy()
-                # Handle tool role messages: {"role": "tool", "tool_call_id": "...", "name": "...", "content": "..."}
-                if message.get("role") == "tool":
-                    # Convert tool dict to Message with ToolResult content
-                    message = Message(
-                        role="user",  # Tool results are treated as user messages in the content flow
-                        content=[
-                            Content(
-                                type="tool_result",
-                                tool_result=ToolResult(
-                                    id=message.get("tool_call_id"),
-                                    result=message.get("content")
-                                )
-                            )
-                        ]
-                    )
-                else:
-                    # Handle cases where content might be None - convert to empty string
-                    if message.get("content") is None:
-                        message["content"] = ""
-
-                    # Extract tool_calls from dict before converting to Message
-                    # FSM sends: {"role": "assistant", "content": None, "tool_calls": [...]}
-                    dict_tool_calls = message.pop("tool_calls", None)
-
-                    message = Message(**message)
-
-                    # If dict had tool_calls, convert them to Content objects
-                    if dict_tool_calls:
-                        if isinstance(message.content, str):
-                            # Convert string content to list
-                            message.content = [Content(type="text", text=message.content)] if message.content else []
-                        elif not isinstance(message.content, list):
-                            message.content = []
-
-                        # Add tool_calls as Content objects
-                        for tc in dict_tool_calls:
-                            message.content.append(
-                                Content(
-                                    type="tool_use",
-                                    tool_use=ToolUse(
-                                        id=tc.get("id"),
-                                        name=tc["function"]["name"],
-                                        args=json.loads(tc["function"]["arguments"]) if isinstance(tc["function"]["arguments"], str) else tc["function"]["arguments"]
-                                    )
-                                )
-                            )
-
-            content, tool_calls, tool_results = format_content(message)
+            message = self._normalize_message(message)
+            content, tool_calls, tool_results = self._format_content(message)
 
             # If there are tool results
             if tool_results:
@@ -155,50 +191,13 @@ class MistralChatModel(LLM):
                 messages_formatted.append(msg_dict)
                 skip_next_tool_results = False
 
-        # Final validation: remove tool messages that do not correspond to a pending
-        # call from the immediately preceding assistant turn. A single assistant
-        # turn may contain multiple calls, and Mistral requires one response for
-        # each call; therefore checking only the immediately preceding message
-        # incorrectly drops every result after the first one.
-        validated_messages = []
-        pending_tool_call_ids = set()
-        for msg in messages_formatted:
-            if msg.get("role") == "assistant":
-                tool_calls = msg.get("tool_calls") or []
-                pending_tool_call_ids = {
-                    tool_call.get("id")
-                    for tool_call in tool_calls
-                    if tool_call.get("id")
-                }
-                validated_messages.append(msg)
-            elif msg.get("role") == "tool":
-                tool_call_id = msg.get("tool_call_id")
-                if tool_call_id in pending_tool_call_ids:
-                    validated_messages.append(msg)
-                    pending_tool_call_ids.remove(tool_call_id)
-            else:
-                # A new user/system message starts a new turn. Any calls left
-                # unresolved by that point cannot be paired safely.
-                pending_tool_call_ids.clear()
-                validated_messages.append(msg)
-
-        # CRITICAL: Detect infinite loop caused by malformed conversation history
-        # If we keep dropping tool messages and ending up with just [system, user],
-        # this means tool_calls are being lost during serialization to the database
-        if len(validated_messages) == 2 and validated_messages[0].get("role") == "system" and validated_messages[1].get("role") == "user":
-            # Check if we dropped assistant messages (indicating corrupted history)
-            dropped_assistant_count = sum(1 for m in messages_formatted if m.get("role") == "assistant")
-            dropped_tool_count = len(messages_formatted) - len(validated_messages)
-
-            if dropped_assistant_count > 0 or dropped_tool_count > 0:
-                # Return just system and user - conversation history is broken anyway
-                return [validated_messages[0], validated_messages[1]]
-
-        return validated_messages
+        return self._validate_tool_messages(messages_formatted)
 
     def _format_tools(
-        self, tools: list[Union[Callable, dict]] = None, tool_choice: str = None
-    ):
+        self,
+        tools: list[Union[Callable, dict]] = None,
+        tool_choice: str = None,
+    ) -> tuple[list[dict], str]:
         """
         Format the tools from a openai dict or a callable function to the Mistral format.
         """
@@ -225,7 +224,9 @@ class MistralChatModel(LLM):
         return tools_formatted, tool_choice
 
 
-    def _map_mistral_message(self, message, usage_info=None) -> Message:
+    def _map_mistral_message(
+        self, message, usage_info=None, stop_reason: str = None
+    ) -> Message:
         """
         Map a Mistral message (from generate/agenerate/stream) to the standard Message format.
         """
@@ -284,15 +285,27 @@ class MistralChatModel(LLM):
                 ) if prompt_tokens_details else 0,
             )
 
+        stop_reason = stop_reason or getattr(message, "stop_reason", None)
+        if stop_reason is None:
+            stop_reason = getattr(message, "finish_reason", None)
+        stop_reason = {
+            "stop": "end_turn",
+            "length": "max_tokens",
+            "tool_calls": "tool_use",
+        }.get(stop_reason, stop_reason)
+        if stop_reason not in {"end_turn", "max_tokens", "tool_use", "content_filter"}:
+            stop_reason = None
+
         return Message(
             role=getattr(message, "role", "assistant"),
             content=content_list,
             usage=usage,
+            stop_reason=stop_reason,
         )
 
     def stream(
         self,
-        messages: List[Dict[str, str]],
+        messages: List[Union[Dict, Message]],
         temperature: float = 1.0,
         max_tokens: int = 1024,
         seed: int | None = None,
@@ -327,7 +340,7 @@ class MistralChatModel(LLM):
 
     async def astream(
         self,
-        messages: List[Dict[str, str]],
+        messages: List[Union[Dict, Message]],
         temperature: float = 1.0,
         max_tokens: int = 1024,
         seed: int | None = None,
@@ -350,7 +363,7 @@ class MistralChatModel(LLM):
         )
 
         # **await the coroutine first**, then async for
-        stream_iter = await self.client.chat.stream_async(
+        stream_iter = await self.aclient.chat.stream_async(
             model=self.llm_name,
             messages=messages,
             temperature=temperature,
@@ -365,7 +378,7 @@ class MistralChatModel(LLM):
 
     def generate(
         self,
-        messages: List[Dict[str, str]],
+        messages: List[Union[Dict, Message]],
         temperature: float = 1.0,
         max_tokens: int = 1024,
         seed: int = None,
@@ -403,11 +416,15 @@ class MistralChatModel(LLM):
         )
 
         message = chat_response.choices[0].message
-        return self._map_mistral_message(message, usage_info=chat_response.usage)
+        return self._map_mistral_message(
+            message,
+            usage_info=chat_response.usage,
+            stop_reason=getattr(chat_response.choices[0], "finish_reason", None),
+        )
 
     async def agenerate(
         self,
-        messages: List[Dict[str, str]],
+        messages: List[Union[Dict, Message]],
         temperature: float = 1.0,
         max_tokens: int = 1024,
         seed: int | None = None,
@@ -434,7 +451,7 @@ class MistralChatModel(LLM):
         if tools:
             tools, tool_choice = self._format_tools(tools, tool_choice)
 
-        chat_response = await self.client.chat.complete_async(
+        chat_response = await self.aclient.chat.complete_async(
             model=self.llm_name,
             messages=messages,
             temperature=temperature,
@@ -446,7 +463,39 @@ class MistralChatModel(LLM):
 
         message = chat_response.choices[0].message
 
-        return self._map_mistral_message(message, usage_info=chat_response.usage)
+        return self._map_mistral_message(
+            message,
+            usage_info=chat_response.usage,
+            stop_reason=getattr(chat_response.choices[0], "finish_reason", None),
+        )
+
+    def parse(
+        self,
+        messages: List[Union[Dict, Message]],
+        schema: Dict,
+        **kwargs,
+    ) -> Dict:
+        """Generate and decode one response matching a JSON schema."""
+        messages = self._format_messages(messages)
+        response = self.client.chat.complete(
+            model=self.llm_name,
+            messages=messages,
+            temperature=kwargs.get("temperature", 0.2),
+            max_tokens=kwargs.get("max_tokens", 4096),
+            random_seed=kwargs.get("seed"),
+            response_format={
+                "type": "json_schema",
+                "json_schema": {
+                    "name": schema["title"],
+                    "schema": schema,
+                    "strict": True,
+                },
+            },
+        )
+        content = response.choices[0].message.content
+        if not content:
+            raise ValueError("Mistral returned empty structured output")
+        return json.loads(content)
 
     async def aparse(
         self,
@@ -456,7 +505,7 @@ class MistralChatModel(LLM):
     ) -> Dict:
         """Generate and decode one response matching a JSON schema."""
         messages = self._format_messages(messages)
-        response = await self.client.chat.complete_async(
+        response = await self.aclient.chat.complete_async(
             model=self.llm_name,
             messages=messages,
             temperature=kwargs.get("temperature", 0.2),

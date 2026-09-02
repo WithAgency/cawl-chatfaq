@@ -88,7 +88,6 @@ def format_msgs_chain_to_llm_context(msgs_chain) -> List[Message]:
     List[Message]
         A list of chat_rag Message objects with messages concatenated by sender.
     """
-    logger.info(f"🔄 CONVERSATION HISTORY: Processing {len(list(msgs_chain))} messages from database")
     aggregated_messages = []
     current_role = None  # "user" for human and "assistant" for bot
     aggregated_contents = []  # list of Content objects for the current group
@@ -110,31 +109,24 @@ def format_msgs_chain_to_llm_context(msgs_chain) -> List[Message]:
 
             # Extract tool_calls from message payload (FSM saves them here)
             tool_calls = payload.get("tool_calls", [])
-            if tool_calls:
-                logger.info(f"🔧 DESERIALIZATION: Found {len(tool_calls)} tool_calls in message payload")
-                logger.debug(f"   Tool calls: {tool_calls}")
             for tool_call in tool_calls:
                 # tool_call format: {"id": "...", "type": "function", "function": {"name": "...", "arguments": "..."}}
-                import json
                 tool_use_obj = ToolUse(
                     id=tool_call.get("id"),
                     name=tool_call["function"]["name"],
                     args=json.loads(tool_call["function"]["arguments"]) if isinstance(tool_call["function"]["arguments"], str) else tool_call["function"]["arguments"]
                 )
                 contents.append(Content(tool_use=tool_use_obj, type="tool_use"))
-                logger.info(f"   ✅ Converted to ToolUse: id={tool_use_obj.id}, name={tool_use_obj.name}")
 
         # Check if this stack represents a tool call (tool use).
         if type == "tool_use":
             tool_use_obj = ToolUse(**payload)
             contents.append(Content(tool_use=tool_use_obj, type="tool_use"))
-            logger.info(f"🔧 DESERIALIZATION: Found tool_use stack: id={tool_use_obj.id}, name={tool_use_obj.name}")
 
         # Check if this stack represents a tool result.
         if type == "tool_result":
             tool_result_obj = ToolResult(**payload)
             contents.append(Content(tool_result=tool_result_obj, type="tool_result"))
-            logger.info(f"📥 DESERIALIZATION: Found tool_result stack: id={tool_result_obj.id}")
 
         return contents
 
@@ -167,7 +159,7 @@ def format_msgs_chain_to_llm_context(msgs_chain) -> List[Message]:
             merged.extend(new)
         return merged
     # Iterate over each message in the msgs_chain, grouping contiguous messages by sender type.
-    for idx, msg in enumerate(msgs_chain):
+    for msg in msgs_chain:
         # Map sender type to LLM context role.
         sender_type = msg.sender.get("type")
         if sender_type == AgentType.human.value:
@@ -180,7 +172,6 @@ def format_msgs_chain_to_llm_context(msgs_chain) -> List[Message]:
 
         # Process the message stacks to obtain its list of Content objects.
         msg_contents = process_msg(msg)
-        logger.info(f"   Message {idx}: role={role}, stacks={len(msg.stack)}, contents={len(msg_contents)}, types={[c.type for c in msg_contents]}")
         if not msg_contents:
             continue
 
@@ -216,19 +207,6 @@ def format_msgs_chain_to_llm_context(msgs_chain) -> List[Message]:
             ).model_dump()
         )
 
-    logger.info(f"✅ CONVERSATION HISTORY: Produced {len(aggregated_messages)} aggregated messages")
-    for idx, msg in enumerate(aggregated_messages):
-        content_summary = []
-        if isinstance(msg.get("content"), list):
-            for c in msg["content"]:
-                if c.get("type") == "text":
-                    content_summary.append(f"text({len(c.get('text', ''))} chars)")
-                elif c.get("type") == "tool_use":
-                    content_summary.append(f"tool_use({c.get('tool_use', {}).get('name', 'unknown')})")
-                elif c.get("type") == "tool_result":
-                    content_summary.append(f"tool_result({c.get('tool_result', {}).get('id', 'unknown')[:8]})")
-        logger.info(f"   Aggregated msg {idx}: role={msg.get('role')}, content=[{', '.join(content_summary)}]")
-
     return aggregated_messages
 
 
@@ -245,7 +223,6 @@ async def resolve_references(reference_kis, retriever_config):
             "similarity": ki["similarity"],
         }
 
-    logger.info(f"References:\n{reference_kis}")
     # All images of the conversation so far
     reference_ki_images = {}
     for reference_ki in reference_kis:
@@ -350,7 +327,6 @@ async def query_llm(
         prev_messages = format_msgs_chain_to_llm_context(
             await database_sync_to_async(list)(conv.get_msgs_chain())
         )
-        logger.info(f"📚 QUERY_LLM: Retrieved {len(prev_messages)} messages from conversation history")
         new_messages = prev_messages.copy()
         if messages: # In case the fsm sends messages
             if messages[0]["role"] == AgentType.system.value:
@@ -369,10 +345,8 @@ async def query_llm(
             )
             return
         if messages:
-            logger.info(f"➕ QUERY_LLM: Adding {len(messages)} new messages from FSM request")
             new_messages.extend(messages)
     else:
-        logger.info(f"🚫 QUERY_LLM: use_conversation_context=False, using only {len(messages) if messages else 0} messages from request")
         new_messages = messages
         if new_messages is None:
             await error_handler({
@@ -381,16 +355,6 @@ async def query_llm(
             },
             )
             return
-
-    logger.info(f"📨 QUERY_LLM: Final message count before LLM call: {len(new_messages)}")
-    for idx, msg in enumerate(new_messages):
-        role = msg.get("role", "unknown")
-        content_preview = ""
-        if isinstance(msg.get("content"), str):
-            content_preview = f"str({len(msg['content'])} chars)"
-        elif isinstance(msg.get("content"), list):
-            content_preview = f"list({len(msg['content'])} items)"
-        logger.info(f"   Message {idx}: role={role}, content={content_preview}")
 
     # Generate a unique ID for this LLM call
     llm_call_id = str(uuid.uuid4())
@@ -579,10 +543,9 @@ class AIConsumer(CustomAsyncConsumer, AsyncJsonWebsocketConsumer):
             await self.close()
             return
         await self.accept()
-        print(f"Starting new LLM WS connection (channel group: {self.channel_name})")
 
     async def disconnect(self, close_code):
-        print(f"Disconnecting from LLM consumer {close_code}")
+        pass
 
     async def receive_json(self, content, **kwargs):
         serializer = RPCResponseSerializer(data=content)

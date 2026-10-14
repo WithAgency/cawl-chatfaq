@@ -331,14 +331,14 @@ class OpenAIChatModel(LLM):
 
         return json.loads(response.choices[0].message.content)
     
-    async def aparse(
+    async def aparse_with_usage(
         self,
         messages: List[Union[Dict, Message]],
         schema: Dict,
         **kwargs,
-    ) -> Dict:
+    ) -> tuple[Dict, Usage | None]:
         """
-        Parse the response from the model into a structured format.
+        Parse a structured response and retain its token usage.
         """
         messages = self._format_messages(messages)
         response_format = {
@@ -356,4 +356,16 @@ class OpenAIChatModel(LLM):
             response_format=response_format,
         )
 
-        return json.loads(response.choices[0].message.content)
+        parsed = json.loads(response.choices[0].message.content)
+        usage = self._map_openai_message(response).usage
+        return parsed, usage
+
+    async def aparse(
+        self,
+        messages: List[Union[Dict, Message]],
+        schema: Dict,
+        **kwargs,
+    ) -> Dict:
+        """Parse structured output using the legacy content-only return shape."""
+        parsed, _usage = await self.aparse_with_usage(messages, schema, **kwargs)
+        return parsed

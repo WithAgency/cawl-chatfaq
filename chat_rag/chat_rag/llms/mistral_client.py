@@ -497,13 +497,13 @@ class MistralChatModel(LLM):
             raise ValueError("Mistral returned empty structured output")
         return json.loads(content)
 
-    async def aparse(
+    async def aparse_with_usage(
         self,
         messages: List[Union[Dict, Message]],
         schema: Dict,
         **kwargs,
-    ) -> Dict:
-        """Generate and decode one response matching a JSON schema."""
+    ) -> tuple[Dict, Usage | None]:
+        """Generate structured output and retain Mistral token usage."""
         messages = self._format_messages(messages)
         response = await self.aclient.chat.complete_async(
             model=self.llm_name,
@@ -523,4 +523,19 @@ class MistralChatModel(LLM):
         content = response.choices[0].message.content
         if not content:
             raise ValueError("Mistral returned empty structured output")
-        return json.loads(content)
+        parsed = json.loads(content)
+        usage_message = self._map_mistral_message(
+            response.choices[0].message,
+            usage_info=response.usage,
+        )
+        return parsed, usage_message.usage
+
+    async def aparse(
+        self,
+        messages: List[Union[Dict, Message]],
+        schema: Dict,
+        **kwargs,
+    ) -> Dict:
+        """Generate and decode one response matching a JSON schema."""
+        parsed, _usage = await self.aparse_with_usage(messages, schema, **kwargs)
+        return parsed

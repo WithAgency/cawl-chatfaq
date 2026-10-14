@@ -404,14 +404,23 @@ async def query_llm(
         )
 
         if response_schema:
-            response_message = await llm.aparse(
-                messages=new_messages,
-                schema=response_schema,
-            )
-            yield {
-                "content": response_message,
-                "last_chunk": True,
-            }
+            if hasattr(llm, "aparse_with_usage"):
+                response_message, usage = await llm.aparse_with_usage(
+                    messages=new_messages,
+                    schema=response_schema,
+                )
+                payload = {
+                    "content": response_message,
+                    "usage": usage.model_dump() if usage else None,
+                    "last_chunk": True,
+                }
+            else:
+                response_message = await llm.aparse(
+                    messages=new_messages,
+                    schema=response_schema,
+                )
+                payload = {"content": response_message, "last_chunk": True}
+            yield payload
         # chat_rag models don't support streaming when using tools
         elif stream:
             extra_args = {}

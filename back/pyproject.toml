@@ -10,8 +10,8 @@ packages = [
 ]
 
 [tool.poetry.dependencies]
-python = "~3.13"
-modelw-preset-django = {version = "~2025.10.0", extras = ["health"]}
+python = "~3.14"
+modelw-preset-django = {version = "~2026.10.0", extras = ["health"]}
 drf-spectacular = {extras = ["sidecar"], version = "*"}
 channels = "*"
 daphne = "*"
@@ -50,7 +50,7 @@ ray = {extras = ["data", "serve"], version = "*"}
 chat-rag = { path = "../chat_rag", develop = true }
 networkx = "*"
 markdown = "*"
-procrastinate = "*"
+procrastinate = "~3.10"
 lmnr = "^0.7.51"
 [tool.poetry.group.dev.dependencies]
 black = "*"

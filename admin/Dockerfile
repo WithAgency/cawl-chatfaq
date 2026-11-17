@@ -1,6 +1,6 @@
 FROM modelw/base:2026.10
 
-COPY --chown=user .npmrc package.json package-lock.json ./
+COPY --chown=user .npmrc package.json pnpm-lock.yaml ./
 
 RUN modelw-docker install
 

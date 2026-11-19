@@ -4,6 +4,7 @@
             <Attach v-if="store.allowAttachments" class="attach-buttom"/>
             <div
                 :placeholder="$t('writeaquestionhere')"
+                data-testid="chat prompt"
                 class="chat-prompt"
                 :contenteditable="store.promptEditable"
                 :class="{

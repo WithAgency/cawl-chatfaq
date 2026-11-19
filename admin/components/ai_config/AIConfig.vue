@@ -70,6 +70,7 @@
                                   :prop="fieldName"
                                   :error="formServerErrors[fieldName]">
                         <el-input
+                            data-testid="prompt"
                             class="prompt-input"
                             v-model="form[fieldName]"
                             autosize

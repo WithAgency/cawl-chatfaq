@@ -1,8 +1,9 @@
 <template>
     <div class="filters-wrapper">
-        <div class="filter-wrapper" v-for="filterInfo in filtersSchema">
+            <div class="filter-wrapper" v-for="filterInfo in filtersSchema" :data-testid="`filter ${filterInfo.placeholder || filterInfo.field}`">
             <div class="filter" v-if="filterInfo.type === 'search'">
                 <el-input v-model="form[filterInfo.field]"
+                          :data-testid="`search ${filterInfo.placeholder}`"
                           @input="submitFiltersDebounce"
                           :placeholder="filterInfo.placeholder"
                           suffix-icon="Search"

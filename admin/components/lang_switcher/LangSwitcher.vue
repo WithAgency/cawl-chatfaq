@@ -1,6 +1,6 @@
 <template>
     <div class="language-wrapper">
-        <el-select v-model="$i18n.locale" @change="changeLang">
+        <el-select data-testid="language" v-model="$i18n.locale" @change="changeLang">
             <el-option
                 v-for="item in [{value: 'en', label: $t('Language: EN')}, {value: 'es', label: $t('Lengua: ES')}, {value: 'fr', label: $t('Langue: FR')}]"
                 :key="item.value"

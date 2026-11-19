@@ -251,14 +251,15 @@ async function initializeConversation() {
 }
 
 function sendMessage(message) {
-    if (!store.canSendMsg)
-        return;
-
     if (!message)
+        return
+    if (store.waitingForResponse || store.speechRecognitionTranscribing || store.conversationClosed)
         return
 
     store.messages.push(message);
-    ws.send(JSON.stringify(message));
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify(message));
+    }
     store.scrollToBottom += 1;
 
     chatInput.value?.blur(); // Remove focus from the input

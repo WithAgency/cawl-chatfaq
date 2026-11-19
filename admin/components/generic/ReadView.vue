@@ -15,6 +15,7 @@
             <div class="section-header-right">
                 <slot name="extra-actions"></slot>
                 <el-button v-if="!readOnly" class="add-button" :class="{'not-only-command': cardProps && tableProps}"
+                           :data-testid="`add ${readableName}`"
                            type="primary" round plain @click="emit('adding')">+
                     {{ $t("additem", {"readablename": readableName}).toUpperCase() }}
                 </el-button>

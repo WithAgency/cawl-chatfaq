@@ -9,20 +9,14 @@
     </client-only>
 </template>
 <script setup>
-import { onMounted } from 'vue';
-
 const conf = useRuntimeConfig()
 
+const requestUrl = useRequestURL()
 const chatfaqWS = ref(conf.public.chatfaqWS)
 const chatfaqAPI = ref(conf.public.chatfaqAPI)
 const title = ref("Hello there 👋")
 const fsmDef = ref("llm_fsm")
 const hideSources = ref(false)
-const stateOverride = ref(null)
-const widgetId = ref("6a5fb833-cdcf-468a-ac22-8f1c2b7b1672")
-
-onMounted(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    stateOverride.value = urlParams.get('state_override');
-})
+const stateOverride = ref(requestUrl.searchParams.get("state_override"))
+const widgetId = ref(requestUrl.searchParams.get("widget_id") || "6a5fb833-cdcf-468a-ac22-8f1c2b7b1672")
 </script>

@@ -1,5 +1,5 @@
 <template>
-    <MenuItem @click="store.darkMode = !store.darkMode">
+    <MenuItem data-testid="color theme" @click="store.darkMode = !store.darkMode">
         <Sun class="light-mode-icon"  v-if="store.darkMode"/>
         <Moon class="dark-mode-icon" v-else/>
         <span v-if="!store.darkMode">{{ $t("showdarkmode") }}</span>

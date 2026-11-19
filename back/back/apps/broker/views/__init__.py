@@ -5,6 +5,7 @@ from zipfile import ZipFile
 
 import django_filters
 from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db.models import Avg, Count, Q
 from django.db.models.functions import Trunc
 from django.http import HttpResponse, JsonResponse
@@ -269,6 +270,7 @@ class Stats(APIView):
         conversations_message_avg = conversations.annotate(
             count=Count("message")
         ).aggregate(avg=Avg("count"))
+        message_avg = conversations_message_avg.get("avg") if conversations_message_avg else None
         # --- Conversations by date
         conversations_by_date = conversations.annotate(
             date=Trunc("created_date", granularity)
@@ -288,7 +290,8 @@ class Stats(APIView):
         general_stats = calculate_general_stats(messages_with_prev, messages_with_prev.count())
         # ----------- Reviews and Feedbacks -----------
         admin_reviews = AdminReview.objects.filter(message__in=messages)
-        user_feedbacks = UserFeedback.objects.filter(message__in=messages, value__isnull=False)
+        # The old message column is gone. Feedback points at message_target.
+        user_feedbacks = UserFeedback.objects.filter(message_target__in=messages)
         reviews_and_feedbacks = calculate_response_stats(admin_reviews, user_feedbacks)
 
         positive_admin_reviews = admin_reviews.filter(ki_review_data__contains=[{"value": "positive"}]).count()
@@ -306,7 +309,7 @@ class Stats(APIView):
             {
                 "total_conversations": total_conversations,
                 "conversations_message_count": list(conversations_message_count.all()),
-                "conversations_message_avg": round(conversations_message_avg.get('avg'), 2) if conversations_message_avg is not None else None,
+                "conversations_message_avg": float(round(message_avg, 2)) if message_avg is not None else 0,
                 "total_messages": messages.count(),  # Change this line
                 "conversations_by_date": list(conversations_by_date.all()),
                 **general_stats,
@@ -315,6 +318,7 @@ class Stats(APIView):
                 "recall": round(recall, 2) if recall is not None else None,
                 "f1": round(f1, 2) if f1 is not None else None,
             },
+            encoder=DjangoJSONEncoder,
             safe=False,
         )
 

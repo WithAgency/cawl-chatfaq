@@ -1,5 +1,5 @@
 <template>
-    <div class="card-wrapper">
+    <div class="card-wrapper" :data-testid="`${createTitle(item)} card`">
         <el-card class="box-card" @click="emit('edit', item.id)">
             <template #header>
                 <div class="card-header-title">{{ createTitle(item) }}</div>
@@ -16,6 +16,7 @@
                     <Delete @click.stop @click="() => {deleting = item.id; deleteDialogVisible = true}" />
                 </el-icon>
                 <span v-if="editable" class="command-edit"
+                      :data-testid="`edit ${createTitle(item)}`"
                       @click='emit("edit", item.id)'>{{ $t("edit") }}</span>
             </div>
         </el-card>

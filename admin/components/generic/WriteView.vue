@@ -104,7 +104,7 @@
                 <el-button @click="emit('exit')">
                     Cancel
                 </el-button>
-                <el-button type="primary" @click="submitForm()">
+                <el-button data-testid="save changes" type="primary" @click="submitForm()">
                     Save changes
                 </el-button>
             </div>

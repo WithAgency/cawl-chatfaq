@@ -4,7 +4,7 @@
         <div class="text-explanation" v-html="$t('dashboardexplanation')"></div>
         <div class="section-title">{{ $t("fsms") }}</div>
         <div class="cards-view">
-            <div class="no-items" v-if="!sdks || !sdks.length">{{ $t('nosdks') }}</div>
+            <div class="no-items" data-testid="no sdks" v-if="!sdks || !sdks.length">{{ $t('nosdks') }}</div>
             <Card v-for="sdk in sdks" :editable="false" :deletable="false" @delete="initItems" :item="sdk"
                   :cardProps="cardPropsSDK" :itemSchema="itemSchemaSDK" :apiUrl="SDKAPIUrl"
                   :titleProps="['fsm_name']" />
@@ -28,6 +28,7 @@
                     <template v-slot:enabled="{item, name}">
                         <span class="title">{{ name }}:</span>
                         <el-switch
+                            :data-testid="`enable ${item.name}`"
                             v-model="item.enabled"
                             :before-change="() => switchEnabled(item, RetrieverAPIUrl)"
                             @click.native.stop
@@ -42,14 +43,15 @@
 
         <div class="section-title">{{ $t("llms") }}</div>
         <div class="cards-view">
-            <div class="no-items" v-if="!llms || !llms.length">{{ $t('nollms') }}</div>
+            <div class="no-items" data-testid="no llms" v-if="!llms || !llms.length">{{ $t('nollms') }}</div>
             <Card v-for="llm in llms" @delete="initItems" @edit="() => goTo('ai_config')" :item="llm"
                   :cardProps="cardPropsLLM" :itemSchema="itemSchemaLLM" :apiUrl="LLMAPIUrl">
                 <template v-slot:enabled="{item, name}">
                     <span class="title">{{ name }}:</span>
-                    <el-switch
-                        v-model="item.enabled"
-                        :before-change="() => switchEnabled(item, LLMAPIUrl)"
+                        <el-switch
+                            :data-testid="`enable ${item.name}`"
+                            v-model="item.enabled"
+                            :before-change="() => switchEnabled(item, LLMAPIUrl)"
                         @click.native.stop
                         :loading="loading[item.id]"
                         :active-value="true"
@@ -60,7 +62,7 @@
         </div>
         <div class="section-title">{{ $t("widgets") }}</div>
         <div class="cards-view">
-            <div class="no-items" v-if="!widgets || !widgets.length">{{ $t('nowidgets') }}</div>
+            <div class="no-items" data-testid="no widgets" v-if="!widgets || !widgets.length">{{ $t('nowidgets') }}</div>
             <Card v-for="widget in widgets" @delete="initItems" @edit="() => goTo('widget_config')"
                   :item="widget" :cardProps="cardPropsWidget" :itemSchema="itemSchemaWidget" :apiUrl="WidgetAPIUrl" />
         </div>
@@ -155,7 +157,7 @@ async function switchEnabled(item, apiUrl) {
     try {
         loading.value[item.id] = true;
         const res = await upsertItem(apiUrl, { id: item.id, enabled: !item.enabled }, itemsStore, false, {}, t);
-        item.enabled = res.enabled;  // Assuming the backend responds with the updated state
+        item.enabled = res.enabled;
         loading.value[item.id] = false;
     } catch (e) {
         loading.value[item.id] = false;

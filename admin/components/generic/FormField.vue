@@ -13,7 +13,7 @@
                          :form="form"
                          :fieldName="fieldName"/>
             <FileField v-else-if="schema.properties[fieldName].type === 'file'" :form="form" :fieldName="fieldName"/>
-            <el-input v-else v-model="form[fieldName]"/>
+            <el-input v-else v-model="form[fieldName]" :data-testid="fieldName"/>
         </el-form-item>
     </slot>
 </template>

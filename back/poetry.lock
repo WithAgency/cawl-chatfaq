@@ -878,12 +878,12 @@ version = "0.4.6"
 description = "Cross-platform colored terminal text."
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,>=2.7"
-groups = ["main", "dev", "doc"]
+groups = ["main", "dev", "doc", "test"]
 files = [
     {file = "colorama-0.4.6-py2.py3-none-any.whl", hash = "sha256:4f1d9991f5acc0ca119f9d443620b77f9d6b33703e51011c16baf57afb285fc6"},
     {file = "colorama-0.4.6.tar.gz", hash = "sha256:08695f5cb7ed6e0531a20572697297273c47b8cae5a63ffc6d6ed5c201be6e44"},
 ]
-markers = {dev = "platform_system == \"Windows\" or sys_platform == \"win32\"", doc = "sys_platform == \"win32\""}
+markers = {dev = "platform_system == \"Windows\" or sys_platform == \"win32\"", doc = "sys_platform == \"win32\"", test = "sys_platform == \"win32\""}
 
 [[package]]
 name = "coloredlogs"
@@ -1827,6 +1827,21 @@ recommended = ["cffi (>=1.17.1) ; platform_python_implementation == \"CPython\""
 test = ["cffi (>=1.17.1) ; platform_python_implementation == \"CPython\"", "coverage (>=5.0) ; sys_platform != \"win32\"", "dnspython (>=1.16.0,<2.0) ; python_version < \"3.10\"", "idna ; python_version < \"3.10\"", "objgraph", "psutil (>=5.7.0) ; sys_platform != \"win32\" or platform_python_implementation == \"CPython\"", "requests"]
 
 [[package]]
+name = "gherkin-official"
+version = "43.0.0"
+description = "Gherkin parser (official, by Cucumber team)"
+optional = false
+python-versions = ">=3.11"
+groups = ["test"]
+files = [
+    {file = "gherkin_official-43.0.0-py3-none-any.whl", hash = "sha256:ec0e20c765c062cc457408a930ef376ccbbddd813f40e2bfedf3c72e481f96b2"},
+    {file = "gherkin_official-43.0.0.tar.gz", hash = "sha256:a928f06282cd9d1f848eacd5b80dac39f318cbfc053187defa5122c8019b6e43"},
+]
+
+[package.dependencies]
+typing-extensions = ">=4"
+
+[[package]]
 name = "google-api-core"
 version = "2.25.1"
 description = "Google API client core library"
@@ -2039,7 +2054,7 @@ version = "3.2.3"
 description = "Lightweight in-process concurrent programming"
 optional = false
 python-versions = ">=3.9"
-groups = ["main"]
+groups = ["main", "test"]
 files = [
     {file = "greenlet-3.2.3-cp310-cp310-macosx_11_0_universal2.whl", hash = "sha256:1afd685acd5597349ee6d7a88a8bec83ce13c106ac78c196ee9dde7c04fe87be"},
     {file = "greenlet-3.2.3-cp310-cp310-manylinux2014_aarch64.manylinux_2_17_aarch64.whl", hash = "sha256:761917cac215c61e9dc7324b2606107b3b292a8349bdebb31503ab4de3f559ac"},
@@ -2424,6 +2439,18 @@ groups = ["main"]
 files = [
     {file = "inflection-0.5.1-py2.py3-none-any.whl", hash = "sha256:f38b2b640938a4f35ade69ac3d053042959b62a0f1076a5bbaa1b9526605a8a2"},
     {file = "inflection-0.5.1.tar.gz", hash = "sha256:1a29730d366e996aaacffb2f1f1cb9593dc38e2ddd30c91250c6dde09ea9b417"},
+]
+
+[[package]]
+name = "iniconfig"
+version = "2.3.1"
+description = "brain-dead simple config-ini parsing"
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "iniconfig-2.3.1-py3-none-any.whl", hash = "sha256:9121e2c1fdb355232495be3194c8dfe87ccc2d5dee45947b78e68f499790d7a7"},
+    {file = "iniconfig-2.3.1.tar.gz", hash = "sha256:67f4b9c50da0dedf52af349e7749a80a9057a5031199791b906c3bb3ae878960"},
 ]
 
 [[package]]
@@ -3110,6 +3137,26 @@ html5 = ["html5lib"]
 htmlsoup = ["BeautifulSoup4"]
 
 [[package]]
+name = "mako"
+version = "1.4.3"
+description = "A super-fast templating language that borrows the best ideas from the existing templating languages."
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "mako-1.4.3-py3-none-any.whl", hash = "sha256:723296007c870bfd6b3f0c3230dba7198096e5269297ebf5e4eff9e7ffa39d4f"},
+    {file = "mako-1.4.3.tar.gz", hash = "sha256:cd6537fe88d5fec315c55c2f8529bc4ce7a9a352ad7db3eeaa6a66e2dd4ec37a"},
+]
+
+[package.dependencies]
+MarkupSafe = ">=2.0"
+
+[package.extras]
+babel = ["Babel"]
+lingua = ["lingua (>=4.16)"]
+testing = ["pytest"]
+
+[[package]]
 name = "markdown"
 version = "3.8.2"
 description = "Python implementation of John Gruber's Markdown."
@@ -3158,7 +3205,7 @@ version = "3.0.2"
 description = "Safely add untrusted strings to HTML/XML markup."
 optional = false
 python-versions = ">=3.9"
-groups = ["main", "doc"]
+groups = ["main", "doc", "test"]
 files = [
     {file = "MarkupSafe-3.0.2-cp310-cp310-macosx_10_9_universal2.whl", hash = "sha256:7e94c425039cde14257288fd61dcfb01963e658efbc0ff54f5306b06054700f8"},
     {file = "MarkupSafe-3.0.2-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:9e2d922824181480953426608b81967de705c3cef4d1af983af849d7bd619158"},
@@ -4319,7 +4366,7 @@ version = "25.0"
 description = "Core utilities for Python packages"
 optional = false
 python-versions = ">=3.8"
-groups = ["main", "dev", "doc"]
+groups = ["main", "dev", "doc", "test"]
 files = [
     {file = "packaging-25.0-py3-none-any.whl", hash = "sha256:29572ef2b1f17581046b3a2227d5c611fb25ec70ca1ba8554b24b0e69331a484"},
     {file = "packaging-25.0.tar.gz", hash = "sha256:d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f"},
@@ -4420,6 +4467,39 @@ spss = ["pyreadstat (>=1.2.0)"]
 sql-other = ["SQLAlchemy (>=2.0.0)", "adbc-driver-postgresql (>=0.8.0)", "adbc-driver-sqlite (>=0.8.0)"]
 test = ["hypothesis (>=6.46.1)", "pytest (>=7.3.2)", "pytest-xdist (>=2.2.0)"]
 xml = ["lxml (>=4.9.2)"]
+
+[[package]]
+name = "parse"
+version = "1.22.4"
+description = "parse() is the opposite of format()"
+optional = false
+python-versions = "*"
+groups = ["test"]
+files = [
+    {file = "parse-1.22.4-py2.py3-none-any.whl", hash = "sha256:ae430a4477316eed4a9710f642b2db968ec89d5d82e6b0908b8169673b476847"},
+    {file = "parse-1.22.4.tar.gz", hash = "sha256:706d458feed5a81b02768d3156e8070baf6cee7d150a3a3c0cd43101a875c3b5"},
+]
+
+[[package]]
+name = "parse-type"
+version = "0.6.6"
+description = "Simplifies to build parse types based on the parse module"
+optional = false
+python-versions = "!=3.0.*,!=3.1.*,>=2.7"
+groups = ["test"]
+files = [
+    {file = "parse_type-0.6.6-py2.py3-none-any.whl", hash = "sha256:3ca79bbe71e170dfccc8ec6c341edfd1c2a0fc1e5cfd18330f93af938de2348c"},
+    {file = "parse_type-0.6.6.tar.gz", hash = "sha256:513a3784104839770d690e04339a8b4d33439fcd5dd99f2e4580f9fc1097bfb2"},
+]
+
+[package.dependencies]
+parse = {version = ">=1.18.0", markers = "python_version >= \"3.0\""}
+six = ">=1.15"
+
+[package.extras]
+develop = ["build (>=0.5.1)", "coverage (>=4.4)", "pylint", "pytest (<5.0) ; python_version < \"3.0\"", "pytest (>=5.0) ; python_version >= \"3.0\"", "pytest-cov", "pytest-html (>=1.19.0)", "ruff ; python_version >= \"3.7\"", "setuptools", "setuptools-scm", "tox (>=2.8,<4.0)", "twine (>=1.13.0)", "virtualenv (<20.22.0) ; python_version <= \"3.6\"", "virtualenv (>=20.0.0) ; python_version > \"3.6\"", "wheel"]
+docs = ["Sphinx (>=1.6)", "sphinx_bootstrap_theme (>=0.6.0)"]
+testing = ["pytest (<5.0) ; python_version < \"3.0\"", "pytest (>=5.0) ; python_version >= \"3.0\"", "pytest-html (>=1.19.0)"]
 
 [[package]]
 name = "parsel"
@@ -4717,6 +4797,18 @@ typing = ["typing-extensions ; python_version < \"3.10\""]
 xmp = ["defusedxml"]
 
 [[package]]
+name = "pixelmatch"
+version = "0.4.0"
+description = "A pixel-level image comparison library."
+optional = false
+python-versions = "<4.0,>=3.10"
+groups = ["test"]
+files = [
+    {file = "pixelmatch-0.4.0-py3-none-any.whl", hash = "sha256:d40e49e05eab0531bc7665f40309d90f5708c3edd121b3fd63385864005b81a8"},
+    {file = "pixelmatch-0.4.0.tar.gz", hash = "sha256:80a9ae1084941569f0e8cc7fe70b50c02312b4dbaf4b37b710e0f75f9667fa32"},
+]
+
+[[package]]
 name = "platformdirs"
 version = "4.3.8"
 description = "A small Python package for determining appropriate platform-specific dirs, e.g. a `user data dir`."
@@ -4739,7 +4831,7 @@ version = "1.54.0"
 description = "A high-level API to automate web browsers"
 optional = false
 python-versions = ">=3.9"
-groups = ["main"]
+groups = ["main", "test"]
 files = [
     {file = "playwright-1.54.0-py3-none-macosx_10_13_x86_64.whl", hash = "sha256:bf3b845af744370f1bd2286c2a9536f474cc8a88dc995b72ea9a5be714c9a77d"},
     {file = "playwright-1.54.0-py3-none-macosx_11_0_arm64.whl", hash = "sha256:780928b3ca2077aea90414b37e54edd0c4bbb57d1aafc42f7aa0b3fd2c2fac02"},
@@ -4754,6 +4846,18 @@ files = [
 [package.dependencies]
 greenlet = ">=3.1.1,<4.0.0"
 pyee = ">=13,<14"
+
+[[package]]
+name = "pluggy"
+version = "1.7.0"
+description = "plugin and hook calling mechanisms for python"
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "pluggy-1.7.0-py3-none-any.whl", hash = "sha256:7dd7b0d8832ba3cb632c306926ded123429211b83641b35dc5c41ad2d34f9bec"},
+    {file = "pluggy-1.7.0.tar.gz", hash = "sha256:d1eaa46ebb595891b860ab086b4d09c8588af65ebd4361b8e8f4bb8920b90ba8"},
+]
 
 [[package]]
 name = "premailer"
@@ -5412,7 +5516,7 @@ version = "13.0.0"
 description = "A rough port of Node.js's EventEmitter to Python with a few tricks of its own"
 optional = false
 python-versions = ">=3.8"
-groups = ["main"]
+groups = ["main", "test"]
 files = [
     {file = "pyee-13.0.0-py3-none-any.whl", hash = "sha256:48195a3cddb3b1515ce0695ed76036b5ccc2ef3a9f963ff9f77aec0139845498"},
     {file = "pyee-13.0.0.tar.gz", hash = "sha256:b391e3c5a434d1f5118a25615001dbc8f669cf410ab67d04c4d4e07c55481c37"},
@@ -5430,7 +5534,7 @@ version = "2.19.2"
 description = "Pygments is a syntax highlighting package written in Python."
 optional = false
 python-versions = ">=3.8"
-groups = ["main", "dev", "doc"]
+groups = ["main", "dev", "doc", "test"]
 files = [
     {file = "pygments-2.19.2-py3-none-any.whl", hash = "sha256:86540386c03d588bb81d44bc3928634ff26449851e99741617ecb9037ee5ec0b"},
     {file = "pygments-2.19.2.tar.gz", hash = "sha256:636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887"},
@@ -5505,6 +5609,88 @@ files = [
 dev = ["build", "flake8", "mypy", "pytest", "twine"]
 
 [[package]]
+name = "pytest"
+version = "9.2.0"
+description = "pytest: simple powerful testing with Python"
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "pytest-9.2.0-py3-none-any.whl", hash = "sha256:07acdcf88ec174f907dc01af70bf52d49b014bbab03faeeade31c96b18c2e588"},
+    {file = "pytest-9.2.0.tar.gz", hash = "sha256:97c4f3b1f3c7414aa36465e09b8220f1d03627993bd51b1282e193753c80557b"},
+]
+
+[package.dependencies]
+colorama = {version = ">=0.4", markers = "sys_platform == \"win32\""}
+iniconfig = ">=2"
+packaging = ">=24"
+pluggy = ">=1.6,<2"
+pygments = ">=2.15"
+
+[package.extras]
+dev = ["argcomplete", "asynctest ; python_version < \"3.11\"", "attrs (>=23.1)", "coverage (>=7.5)", "hypothesis (>=6.75)", "mock", "numpy (>=1.26)", "pexpect (>=4.9)", "pytest-xdist (>=3.5)", "pyyaml", "requests", "setuptools", "xmlschema"]
+
+[[package]]
+name = "pytest-bdd"
+version = "9.0.1"
+description = "BDD for pytest"
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "pytest_bdd-9.0.1-py3-none-any.whl", hash = "sha256:54e84b8d497ac87af76cfbc1a285584d34eeb762072f81793c9ed7ef0993883d"},
+    {file = "pytest_bdd-9.0.1.tar.gz", hash = "sha256:0a0c8e54e1646d384c79c47f5756fea1b4bebf97251ff2cb52105aac951276bc"},
+]
+
+[package.dependencies]
+gherkin-official = ">=29.0.0,!=31.0.0,!=32.0.0"
+mako = "*"
+packaging = "*"
+parse = "*"
+parse-type = "*"
+pytest = ">=7.0.0"
+typing-extensions = "*"
+
+[[package]]
+name = "pytest-django"
+version = "4.14.0"
+description = "A Django plugin for pytest."
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "pytest_django-4.14.0-py3-none-any.whl", hash = "sha256:c533b08d89cc675efcd5398eea270b34547e35f9a3608e2c9748dd88428ea187"},
+    {file = "pytest_django-4.14.0.tar.gz", hash = "sha256:26787dd3f422cfbab8f55b80a776e2edea7a11092cb74e960bef1312515708ef"},
+]
+
+[package.dependencies]
+pytest = ">=7.0.0"
+
+[package.extras]
+django = ["django (>=5.2)"]
+docs = ["sphinx", "sphinx-rtd-theme"]
+
+[[package]]
+name = "pytest-playwright"
+version = "0.10.0"
+description = "A pytest wrapper with fixtures for Playwright to automate web browsers"
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "pytest_playwright-0.10.0-py3-none-any.whl", hash = "sha256:8314d1af726e2c15531635902ece3ee47ed83f5a75c937a7eda8686d3dae6c0d"},
+    {file = "pytest_playwright-0.10.0.tar.gz", hash = "sha256:47baf574dfb120bb53675d05c9784f8bf94e04c6dd7477dc56159ce732191952"},
+]
+
+[package.dependencies]
+playwright = ">=1.18"
+pytest = ">=7.0.0,<10.0.0"
+python-slugify = ">=6.0.0,<10.0.0"
+
+[package.extras]
+base-url = ["pytest-base-url (>=1.0.0,<3.0.0)"]
+
+[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
@@ -5561,6 +5747,25 @@ files = [
     {file = "python-json-logger-2.0.7.tar.gz", hash = "sha256:23e7ec02d34237c5aa1e29a070193a4ea87583bb4e7f8fd06d3de8264c4b2e1c"},
     {file = "python_json_logger-2.0.7-py3-none-any.whl", hash = "sha256:f380b826a991ebbe3de4d897aeec42760035ac760345e57b812938dc8b35e2bd"},
 ]
+
+[[package]]
+name = "python-slugify"
+version = "9.2.0"
+description = "A Python slugify application that also handles Unicode"
+optional = false
+python-versions = ">=3.10"
+groups = ["test"]
+files = [
+    {file = "python_slugify-9.2.0-py3-none-any.whl", hash = "sha256:7298dcfc65e9ccdf834b3c398f163af0d09a9a8fc1ee6a7b2dffd8d38bfb756e"},
+    {file = "python_slugify-9.2.0.tar.gz", hash = "sha256:cee32948083476013804de1667724fb1362dacb71e47b1d5d92adf8db6ee3298"},
+]
+
+[package.dependencies]
+text-unidecode = ">=1.3"
+
+[package.extras]
+anyascii = ["anyascii (>=0.3.2)"]
+unidecode = ["Unidecode (>=1.1.1)"]
 
 [[package]]
 name = "pytz"
@@ -6208,7 +6413,7 @@ version = "1.17.0"
 description = "Python 2 and 3 compatibility utilities"
 optional = false
 python-versions = "!=3.0.*,!=3.1.*,!=3.2.*,>=2.7"
-groups = ["main"]
+groups = ["main", "test"]
 files = [
     {file = "six-1.17.0-py2.py3-none-any.whl", hash = "sha256:4721f391ed90541fddacab5acf947aa0d3dc7d27b2e1e8eda2be8970586c3274"},
     {file = "six-1.17.0.tar.gz", hash = "sha256:ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"},
@@ -6580,6 +6785,18 @@ doc = ["reno", "sphinx"]
 test = ["pytest", "tornado (>=4.5)", "typeguard"]
 
 [[package]]
+name = "text-unidecode"
+version = "1.3"
+description = "The most basic Text::Unidecode port"
+optional = false
+python-versions = "*"
+groups = ["test"]
+files = [
+    {file = "text-unidecode-1.3.tar.gz", hash = "sha256:bad6603bb14d279193107714b288be206cac565dfa49aa5b105294dd5c4aab93"},
+    {file = "text_unidecode-1.3-py2.py3-none-any.whl", hash = "sha256:1311f10e8b895935241623731c2ba64f4c455287888b18189350b67134a822e8"},
+]
+
+[[package]]
 name = "textual"
 version = "5.2.0"
 description = "Modern Text User Interface framework"
@@ -6788,7 +7005,7 @@ version = "4.14.1"
 description = "Backported and Experimental Type Hints for Python 3.9+"
 optional = false
 python-versions = ">=3.9"
-groups = ["main"]
+groups = ["main", "test"]
 files = [
     {file = "typing_extensions-4.14.1-py3-none-any.whl", hash = "sha256:d1e1e3b58374dc93031d6eda2420a48ea44a36c2b4766a4fdeb3710755731d76"},
     {file = "typing_extensions-4.14.1.tar.gz", hash = "sha256:38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36"},
@@ -7557,4 +7774,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.1"
 python-versions = "~3.14"
-content-hash = "345f73defcf277418e7d07eb92f009ba057724014aad7f733b442c015bb66587"
+content-hash = "f681b95cf64c7226a36a690caffbe18bd07044e4cbe8c224d166f54891730976"

@@ -28,7 +28,7 @@
         read-only
     >
         <template v-slot:view="{row}">
-            <div class="go-to-view" @click="goToLabelingConversation(row.id)">{{ $t("view") }}</div>
+            <div class="go-to-view" :data-testid="`view ${row.name}`" @click="goToLabelingConversation(row.id)">{{ $t("view") }}</div>
         </template>
         <template v-slot:fsms="{row}">
             {{ row?.fsms ? row.fsms.join(",") : "" }}

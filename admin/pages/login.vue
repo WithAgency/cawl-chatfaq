@@ -16,10 +16,10 @@
             @keydown.enter.native="submitForm(authFormRef)"
         >
             <el-form-item :label="$t('email')" prop="email">
-                <el-input v-model="authForm.email" :placeholder="$t('enteryouremail')"/>
+                <el-input data-testid="email" v-model="authForm.email" :placeholder="$t('enteryouremail')"/>
             </el-form-item>
             <el-form-item class="login-form-password" :label="$t('password')" prop="password">
-                <el-input v-model="authForm.password" :placeholder="$t('enteryourpassword')" type="password"
+                <el-input data-testid="password" v-model="authForm.password" :placeholder="$t('enteryourpassword')" type="password"
                           autocomplete="off" show-password  :validate-event="false"/>
             </el-form-item>
             <client-only>
@@ -29,7 +29,7 @@
                 </el-form-item>
             </client-only>
             <el-form-item>
-                <el-button type="primary" @click="submitForm(authFormRef)">
+                <el-button data-testid="login" type="primary" @click="submitForm(authFormRef)">
                     {{ $t('login') }}
                 </el-button>
             </el-form-item>

@@ -10,7 +10,9 @@ import VueI18nVitePlugin from '@intlify/unplugin-vue-i18n/vite'
 export default defineNuxtConfig({
     ssr: true,
     build: {
-        transpile: []
+        // Otherwise the server bundle imports vue-i18n through a broken
+        // relative path into pnpm's store and /demo/ answers 500.
+        transpile: ["vue-i18n"],
     },
     devServer: {
         port: parseInt(process.env.WIDGET_PORT ?? "3000"),

@@ -7,6 +7,7 @@ license = "Proprietary"
 
 packages = [
     {include = "back"},
+    {include = "bdd"},
 ]
 
 [tool.poetry.dependencies]
@@ -60,9 +61,38 @@ ipython = "*"
 [tool.poetry.group.doc.dependencies]
 sphinx = "<6"
 
+[tool.poetry.group.test.dependencies]
+pytest = "*"
+pytest-django = "*"
+pytest-bdd = "*"
+pytest-playwright = "*"
+playwright = "*"
+pixelmatch = "*"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "back.config.settings"
+pythonpath = ["."]
+testpaths = ["bdd"]
+addopts = "--browser chromium"
+markers = [
+    "bdd: end-to-end browser scenarios",
+    "smoke: login and anonymous access",
+    "menu: navigation, language and logout",
+    "dashboard: home cards",
+    "data: knowledge bases and items",
+    "ai: LLM, prompt and generation config",
+    "ray: scenarios that need Ray",
+    "widgetconfig: widget and theme admin",
+    "labeling: conversation labeling",
+    "stats: statistics cards",
+    "users: users and groups",
+    "widget: embedded chat widget",
+    "visual: screenshot comparisons",
+]
+
 [tool.isort]
 profile = "black"
-known_first_party = "back"
+known_first_party = "back,bdd"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

@@ -4,6 +4,16 @@ from back.apps.language_model.models import Intent
 
 
 def calculate_general_stats(prev_messages, num_messages):
+        if not num_messages:
+            return {
+                "chit_chats_count": 0,
+                "chit_chats_percentage": 0,
+                "unanswerable_queries_count": 0,
+                "unanswerable_queries_percentage": 0,
+                "answerable_queries_count": 0,
+                "answerable_queries_percentage": 0,
+            }
+
         chit_chats_count = prev_messages.filter(messageknowledgeitem__isnull=True).count()
         chit_chats_percentage = chit_chats_count / num_messages * 100
 

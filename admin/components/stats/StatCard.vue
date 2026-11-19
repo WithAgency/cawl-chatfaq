@@ -1,5 +1,5 @@
 <template>
-<div class="stat-card-wrapper">
+<div class="stat-card-wrapper" :data-testid="`stat ${title}`">
     <div v-if="typeof content === 'number'">
         <div class="stat-title">{{title}}</div>
         <div class="stat-content">{{content}}<span v-if="type == 'percentage'">%</span></div>

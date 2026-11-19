@@ -3,6 +3,7 @@
                   :prop="fieldName"
                   class="secret-wrapper">
         <el-input
+            :data-testid="fieldName"
             v-model="form[fieldName]"
             :type="inputType"
             :placeholder="$t(placeholder)"

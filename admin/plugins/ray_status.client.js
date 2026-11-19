@@ -1,5 +1,9 @@
 export default defineNuxtPlugin(async (nuxtApp) => {
     const token = useCookie('token').value
+    if (!token) {
+        nuxtApp.provide('useRay', false)
+        return
+    }
     const options = {
         headers: {
             'Authorization': `Token ${token}`,

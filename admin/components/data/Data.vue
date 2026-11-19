@@ -26,7 +26,7 @@
                 :leaveAfterSave="false"
             >
                 <template v-slot:extra-card-bottom="{item}">
-                    <el-button class="bottom-card-button" @click="goToKIs(item.id)">{{
+                    <el-button class="bottom-card-button" :data-testid="`view knowledge items ${item.name}`" @click="goToKIs(item.id)">{{
                             $t("viewknowledgeitems")
                         }}
                     </el-button>

@@ -17,7 +17,8 @@
     <div v-else
          :class="{'dark-mode': store.darkMode}"
          class="prompt-right-button"
-         @click="() => {if(activeSend) {emit('send')}}"
+         data-testid="send message"
+         @click="() => { if (store.promptWithText && !store.waitingForResponse && !store.conversationClosed) emit('send') }"
     >
         <Send class="chat-prompt-button send" :class="{'dark-mode': store.darkMode, 'active': activeSend}"/>
     </div>

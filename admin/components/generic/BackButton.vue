@@ -1,5 +1,5 @@
 <template>
-    <div class="back-button">
+    <div class="back-button" data-testid="back">
         <el-icon>
             <ArrowLeft/>
         </el-icon>

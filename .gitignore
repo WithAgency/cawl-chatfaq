@@ -23,6 +23,8 @@ eggs/
 lib/
 !back/back/apps/fsm/lib/
 !back/back/apps/broker/lib/
+!front/src/lib/
+!front/src/lib/**
 lib64/
 parts/
 sdist/

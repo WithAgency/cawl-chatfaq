@@ -1,0 +1,3 @@
+allowBuilds:
+  "@parcel/watcher": false
+  "@sentry/cli": false

@@ -112,25 +112,16 @@ services:
       - ./sdk/chatfaq_sdk:/chatfaq_sdk
       - ./sdk/examples:/examples
 
-  widget:
+  front:
     build:
-      context: widget
-      dockerfile: Dockerfile
-    image: chatfaq_widget
-    container_name: chatfaq_widget
-    depends_on:
-      - back
-    ports:
-      - 3003:3000
-    networks:
-      - default
-
-  admin:
-    build:
-      context: admin
-      dockerfile: Dockerfile
-    image: chatfaq_admin
-    container_name: chatfaq_admin
+      context: .
+      dockerfile: front/Dockerfile
+    image: chatfaq_front
+    container_name: chatfaq_front
+    environment:
+      API_URL: http://back:8000
+      VITE_API_URL: http://back:8000
+      PUBLIC_API_URL: http://back:8000
     depends_on:
       - back
     ports:

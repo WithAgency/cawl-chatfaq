@@ -26,21 +26,15 @@ Make sure the next list of packages are installed on your system:
 
 Install project dependencies:
 
-    pnpm install --frozen-lockfile
+    pnpm install
 
 ## Run
 
-First of all, create a `.env` file with the needed variables set. You can see an example of those on [.env_example](.env_example) file. Next you can see the explanation of each variable:
+The widget is a browser library. The SvelteKit admin serves a demo at `/demo?widget_id=...` on the same origin as the API proxy.
 
-`NUXT_PUBLIC_CHATFAQ_API`: The address for the HTTP of the back-end server.
+Build the package:
 
-`NUXT_PUBLIC_CHATFAQ_WS`:  The address for the WS of the back-end server.
-
-Run the example:
-
-    pnpm run dev
-
-This will run a node server which will serve an empty webpage with just the Widget integrated on it, if you navigate to http://localhost:3000
+    pnpm package
 
 ## Usage
 

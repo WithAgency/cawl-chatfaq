@@ -1,0 +1,10 @@
+**/.git
+**/node_modules
+**/.output
+**/.nuxt
+**/.svelte-kit
+front/build
+**/__pycache__
+**/.venv
+**/.pytest_cache
+admin

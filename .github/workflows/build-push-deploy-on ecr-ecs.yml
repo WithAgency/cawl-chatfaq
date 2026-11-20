@@ -22,7 +22,6 @@ jobs:
             target-folder:
                 [
                 "back",
-                "widget",
                 "admin",
                 "sdk"
                 ]
@@ -61,7 +60,7 @@ jobs:
 
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
-        working-directory: ./${{ matrix.target-folder }}
+        working-directory: .
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: ${{ github.ref_name }}
@@ -69,14 +68,20 @@ jobs:
           ECR_REPOSITORY: "chatfaq-${{ matrix.target-folder }}"
         #"steps.filter.outputs.folder == 'true'
         run: |
-          # Choose Dockerfile based on the target folder
+          # The admin image is the SvelteKit server. Its Dockerfile needs the
+          # repo root so it can copy the widget library next to the front.
           if [ "${{ matrix.target-folder }}" == "back" ]; then
-            DOCKERFILE=gpu.Dockerfile
+            DOCKERFILE=back/gpu.Dockerfile
+            CONTEXT=.
+          elif [ "${{ matrix.target-folder }}" == "admin" ]; then
+            DOCKERFILE=front/Dockerfile
+            CONTEXT=.
           else
-            DOCKERFILE=Dockerfile
+            DOCKERFILE=${{ matrix.target-folder }}/Dockerfile
+            CONTEXT=${{ matrix.target-folder }}
           fi
           # Build a docker container and apply two tags
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:$DOCKER_TAG_TO_DEPLOY -f $DOCKERFILE .
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:$DOCKER_TAG_TO_DEPLOY -f $DOCKERFILE $CONTEXT
           # Push both tags to ECR
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$DOCKER_TAG_TO_DEPLOY

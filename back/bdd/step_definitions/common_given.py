@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from playwright.sync_api import Page, expect
 from pytest_bdd import given, parsers, when
 
-from .utils import fill_testid
+from .utils import fill_testid, wait_until_mounted
 
 LOGIN_EMAIL = "ada@chatfaq.test"
 LOGIN_PASSWORD = "correct"
@@ -42,11 +42,9 @@ def open_page(page_name: str, page: Page, front_server: str) -> None:
     name = page_name.strip("/")
     path = PAGES.get(name, name)
     page.goto(str(httpx.URL(front_server).join(f"/{path}")))
-    # The server HTML is ready before Vue mounts. Filling or clicking earlier
+    # The server HTML is ready before Svelte mounts. Filling or clicking earlier
     # hits controls that do not have their listeners yet.
-    page.wait_for_function(
-        "() => Boolean(document.querySelector('#__nuxt')?.__vue_app__)"
-    )
+    wait_until_mounted(page)
 
 
 @given("the admin user exists")
@@ -62,6 +60,8 @@ def logged_in(page: Page, front_server: str):
     fill_testid(page, "password", LOGIN_PASSWORD)
     page.get_by_test_id("login").click()
     expect(page.get_by_text("Welcome, Ada")).to_be_visible()
+    # The welcome text is in the server HTML, before the menu is painted.
+    wait_until_mounted(page)
 
 
 @given(parsers.cfparse("I am on the {page_name} page"))

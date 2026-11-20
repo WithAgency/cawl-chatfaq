@@ -1,0 +1,26 @@
+{
+    "name": "chatfaq-front",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite dev --port 3000 --host",
+        "build": "vite build",
+        "preview": "vite preview --port 3000 --host",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    },
+    "dependencies": {
+        "@model-w/preset-sveltekit": "~2026.10.1",
+        "@sentry/sveltekit": "11.3.x"
+    },
+    "devDependencies": {
+        "@sveltejs/adapter-node": "5.5.x",
+        "@sveltejs/kit": "2.70.x",
+        "@sveltejs/vite-plugin-svelte": "7.3.x",
+        "sass": "1.105.x",
+        "svelte": "5.57.x",
+        "svelte-check": "4.7.x",
+        "typescript": "5.9.x",
+        "vite": "8.3.x"
+    }
+}

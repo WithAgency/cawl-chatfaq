@@ -5,6 +5,8 @@ import re
 from playwright.sync_api import Page, expect
 from pytest_bdd import parsers, then
 
+from .utils import wait_until_mounted
+
 
 @then(parsers.cfparse('I should see the text "{text}"'))
 def should_see_text(text: str, page: Page):
@@ -78,6 +80,7 @@ def no_console_errors(browser_console):
 
 @then(parsers.cfparse('the page should match the "{name}" snapshot'))
 def match_snapshot(name: str, page: Page, assert_snapshot):
+    wait_until_mounted(page)
     page.set_viewport_size({"width": 1280, "height": 720})
     image = page.screenshot(animations="disabled")
     difference = assert_snapshot(image, f"{name}-1280x720.png")

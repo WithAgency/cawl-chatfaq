@@ -20,10 +20,7 @@ services:
     env_file:
       - "back/.env"
 
-  widget:
+  front:
     env_file:
-      - "widget/.env"
-
-  admin:
-    env_file:
-      - "admin/.env"
+      - path: "front/.env"
+        required: false

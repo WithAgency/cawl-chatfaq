@@ -1,0 +1,89 @@
+:root {
+    color: #1c1b22;
+    font-family: "Open Sans", sans-serif;
+    background: #f7f5fb;
+}
+
+body {
+    margin: 0;
+}
+
+.shell {
+    display: flex;
+    min-height: 100vh;
+}
+
+.menu {
+    width: 240px;
+    min-height: 100vh;
+    background: #2a2140;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 16px;
+    box-sizing: border-box;
+}
+
+.menu a,
+.menu button {
+    color: white;
+    background: transparent;
+    border: 0;
+    text-align: left;
+    text-decoration: none;
+    font: inherit;
+    cursor: pointer;
+    padding: 8px;
+}
+
+main {
+    flex: 1;
+    padding: 32px;
+}
+
+.login {
+    width: 330px;
+    margin: 15vh auto;
+}
+
+.login input,
+.resource input,
+.resource textarea,
+.filters input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 4px;
+}
+
+.cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.cards article,
+section article {
+    border: 1px solid #ddd;
+    background: white;
+    padding: 12px;
+    width: 240px;
+    cursor: pointer;
+}
+
+button[data-testid="login"],
+button[data-testid="save changes"],
+button[data-testid^="add "] {
+    margin-top: 16px;
+    background: #5b4b8a;
+    color: white;
+    border: 0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+h1 {
+    font-family: Montserrat, sans-serif;
+}

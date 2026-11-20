@@ -1,15 +1,15 @@
 images:
-  - id: admin
-    context: admin
-    dockerfile: Dockerfile
+  - id: front
+    context: .
+    dockerfile: front/Dockerfile
   - id: back
     context: .
     dockerfile: back/Dockerfile
 
 components:
-  - id: admin
-    image: admin
-    envs: [admin]
+  - id: front
+    image: front
+    envs: [front]
     size_hint: ram >= 512m
   - id: back
     image: back
@@ -24,7 +24,7 @@ ingresses:
   - match:
       prefix: '/'
     target:
-      component: admin
+      component: front
       port: 3000
   - match:
       prefix: '/back/'
@@ -52,10 +52,9 @@ resources:
       cluster: psql
 
 envs:
-  admin:
-    NUXT_PROXY_OPTIONS_TARGET: '${{ components::back.private_url }}'
-    NUXT_API_URL: '${{ components::back.private_url }}'
-    NUXT_PUBLIC_CHATFAQ_WS: 'wss://${{ domains::back.name }'
+  front:
+    API_URL: '${{ components::back.private_url }}'
+    VITE_API_URL: '${{ components::back.private_url }}'
     SENTRY_DSN: '${{ vars::SENTRY_DSN_ADMIN }}'
     SENTRY_ENVIRONMENT: '${{ deployment::env.name }}'
   back:
